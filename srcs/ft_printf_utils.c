@@ -6,7 +6,7 @@
 /*   By: nlegrand <nlegrand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 22:01:14 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/10/01 17:27:06 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/10/02 00:43:10 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,27 +42,27 @@ int	count_conversions(const char *s)
 	return (count);
 }
 
-void	putconv(const char c, va_list *valist)
+void	putconv(const char c, va_list *valist, int *ret)
 {
 	if (c == 'c')
-		ft_putchar_fd(va_arg(*valist, int), 1);
+		handle_char(valist, ret);
 	else if (c == 's')
-		ft_putstr_fd(va_arg(*valist, char *), 1);
+		handle_str(valist, ret);
 	else if (c == 'p')
-		putptr(va_arg(*valist, void *));
+		handle_ptr(valist, ret);
 	else if ((c == 'd') || (c == 'i'))
-		ft_putnbr_fd(va_arg(*valist, int), 1);
+		handle_di(valist, ret);
 	else if (c == 'u')
-		putuint(va_arg(*valist, unsigned int)); // NOT THOROUGHLY TESTED
+		handle_uint(valist, ret);
 	else if (c == 'x')
-		puthex(va_arg(*valist, unsigned int), 0);
+		handle_hex(0, valist, ret);
 	else if (c == 'X')
-		puthex(va_arg(*valist, unsigned int), 1);
+		handle_hex(1, valist, ret);
 	else if (c == '%')
-		ft_putchar_fd('%', 1);
+		handle_percent(ret);
 }
 
-size_t	len_to_conv(const char *s) // rework for edge cases
+size_t	len_to_conv(const char *s)
 {
 	char *ptr;
 

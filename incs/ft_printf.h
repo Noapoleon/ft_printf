@@ -10,10 +10,14 @@
 int		ft_printf(const char *s, ...);
 int		is_setchar(const char *set, const char c);
 int		count_conversions(const char *s);
-void	putconv(const char c, va_list *valist);
+void	putconv(const char c, va_list *valist, int *ret);
 size_t	len_to_conv(const char *s);
-void	putptr(void *ptr);
-void	puthex(unsigned int n, int caps);
-void	putuint(unsigned int n);
+void	handle_char(va_list *valist, int *ret);
+void	handle_str(va_list *valist, int *ret);
+void	handle_ptr(va_list *valist, int *ret);
+void	handle_di(va_list *valist, int *ret);
+void	handle_uint(va_list *valist, int *ret);
+void	handle_hex(int caps, va_list *valist, int *ret);
+void	handle_percent(int *ret);
 
 #endif

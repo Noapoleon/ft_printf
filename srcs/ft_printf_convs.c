@@ -6,19 +6,35 @@
 /*   By: nlegrand <nlegrand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 17:49:32 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/10/01 17:28:22 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/10/02 00:56:29 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-void	putptr(void *ptr)
+void	handle_char(va_list *valist, int *ret)
+{
+	*ret += 1;
+	ft_putchar_fd((char)va_arg(*valist, int), 1);
+}
+
+void	handle_str(va_list *valist, int *ret)
+{
+	char *tmp;
+
+	tmp = va_arg(*valist, char *);
+	*ret += ft_strlen(tmp);
+	ft_putstr_fd(tmp, 1);
+}
+
+void	handle_ptr(va_list *valist, int *ret)
 {
 	unsigned long	ptr_n;
 	char			ptr_s[15];
 	unsigned int	i;
 
-	ptr_n = (unsigned long long)ptr;
+	ptr_n = va_arg(*valist, unsigned long long);
+	*ret += 14;
 	ptr_s[0] = '0';
 	ptr_s[1] = 'x';
 	ptr_s[14] = '\0';
@@ -35,37 +51,38 @@ void	putptr(void *ptr)
 	write(1, ptr_s, 15);
 }
 
-void	puthex(unsigned int n, int caps)
+void	handle_di(va_list *valist, int *ret)
+{
+	int	n;
+	int	len;
+
+	n = va_arg(*valist, int);
+	ft_putnbr_fd(n, 1);
+	len = 1;
+	while (n >= 10)
+	{
+		n /= 10;
+		++len;
+	}
+	*ret += len;
+}
+
+void	handle_uint(va_list *valist, int *ret)
 {
 	unsigned long	nn;
 	unsigned long	pow;
+	int				len;
 	char			tmp;
 
-	nn = (unsigned long)n;
+	nn = va_arg(*valist, unsigned int);
 	pow = 1;
-	while ((nn / pow) >= 16)
-		pow *= 16;
-	while (pow > 0)
-	{
-		if (((nn / pow) % 16) < 10)
-			tmp = '0' + ((nn / pow) % 16);
-		else
-			tmp = 'a' + ((nn / pow) % 16 - 10) - (caps * 32);
-		pow /= 16;
-		write(1, &tmp, 1);
-	}
-}
-
-void	putuint(unsigned int n)
-{
-	long	nn;
-	long	pow;
-	char	tmp;
-
-	nn = (long)n;
-	pow = 1;
+	len = 1;
 	while ((nn / pow) >= 10)
+	{
 		pow *= 10;
+		++len;
+	}
+	*ret += len;
 	while (pow > 0)
 	{
 		tmp = '0' + ((nn / pow) % 10);
@@ -74,4 +91,35 @@ void	putuint(unsigned int n)
 	}
 }
 
-// putuint
+void	handle_hex(int caps, va_list *valist, int *ret)
+{
+	unsigned long	n;
+	unsigned long	pow;
+	char			tmp;
+	int				len;
+
+	n = va_arg(*valist, unsigned int);
+	pow = 1;
+	len = 1;
+	while ((n / pow) >= 16)
+	{
+		pow *= 16;
+		++len;
+	}
+	*ret += len;
+	while (pow > 0)
+	{
+		if (((n / pow) % 16) < 10)
+			tmp = '0' + ((n / pow) % 16);
+		else
+			tmp = 'a' + ((n / pow) % 16 - 10) - (caps * 32);
+		pow /= 16;
+		write(1, &tmp, 1);
+	}
+}
+
+void	handle_percent(int *ret)
+{
+	*ret += 1;
+	write(1, "%", 1);
+}
