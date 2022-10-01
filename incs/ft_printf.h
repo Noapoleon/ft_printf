@@ -7,11 +7,13 @@
 
 # define CONV_SET "cspdiuxX%"
 
-int		ft_printf(const char *s);
+int		ft_printf(const char *s, ...);
 int		is_setchar(const char *set, const char c);
 int		count_conversions(const char *s);
-void	putconv(const char c);
+void	putconv(const char c, va_list *valist);
 size_t	len_to_conv(const char *s);
-void	putaddr(void *addr);
+void	putptr(void *ptr);
+void	puthex(unsigned int n, int caps);
+void	putuint(unsigned int n);
 
 #endif

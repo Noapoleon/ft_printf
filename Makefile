@@ -13,7 +13,8 @@ LIBFT	= libft
 
 # Files
 SRCS	=	ft_printf.c \
-			ft_printf_utils.c
+			ft_printf_utils.c \
+			ft_printf_convs.c
 OBJS	= $(addprefix $(OBJDIR)/, $(SRCS:.c=.o))
 HEDS	= $(INCDIR)/ft_printf.h
 
