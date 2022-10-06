@@ -1,70 +1,80 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf_convs.c                                  :+:      :+:    :+:   */
+/*   ft_printf_nums.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nlegrand <nlegrand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 17:49:32 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/10/02 00:56:29 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/10/02 21:54:48 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-void	handle_char(va_list *valist, int *ret)
+char	*make_hex_str(unsigned long n)
 {
-	*ret += 1;
-	ft_putchar_fd((char)va_arg(*valist, int), 1);
-}
+	char			*str;
+	char			*og_str;
+	unsigned long	pow;
 
-void	handle_str(va_list *valist, int *ret)
-{
-	char *tmp;
-
-	tmp = va_arg(*valist, char *);
-	*ret += ft_strlen(tmp);
-	ft_putstr_fd(tmp, 1);
+	pow = 1;
+	while ((n / pow) >= 16)
+		pow *= 16;
+	str = (char *)malloc(sizeof(char) * 17);
+	if (str == NULL)
+		return (NULL);
+	og_str = str;
+	while (pow != 0)
+	{
+		if (((n / pow) % 16) < 10)
+			*str++ = '0' + ((n / pow) % 16);
+		else
+			*str++ = 'a' + ((n / pow) % 16 - 10);
+		pow /= 16;
+	}
+	*str = '\0';
+	return (og_str);
 }
 
 void	handle_ptr(va_list *valist, int *ret)
 {
 	unsigned long	ptr_n;
-	char			ptr_s[15];
-	unsigned int	i;
+	char			*ptr_s;
 
 	ptr_n = va_arg(*valist, unsigned long long);
-	*ret += 14;
-	ptr_s[0] = '0';
-	ptr_s[1] = 'x';
-	ptr_s[14] = '\0';
-	i = 13;
-	while (i >= 2)
+	if (ptr_n == 0)
 	{
-		if ((ptr_n % 16) < 10)
-			ptr_s[i] = '0' + (ptr_n % 16);
-		else
-			ptr_s[i] = 'a' + (ptr_n % 16 - 10);
-		ptr_n /= 16;
-		--i;
+		*ret += 5;
+		write(1, "(nil)", 5);
+		return ;
 	}
-	write(1, ptr_s, 15);
+	ptr_s = make_hex_str(ptr_n);
+	if (ptr_s == NULL)
+		return ;
+	write(1, "0x", 2);
+	write(1, ptr_s, ft_strlen(ptr_s));
+	*ret += (ft_strlen(ptr_s) + 2);
+	free(ptr_s);
 }
 
 void	handle_di(va_list *valist, int *ret)
 {
-	int	n;
-	int	len;
+	long	n;
+	int		neg;
+	int		len;
 
-	n = va_arg(*valist, int);
+	n = (long)va_arg(*valist, int);
+	neg = (n < 0);
 	ft_putnbr_fd(n, 1);
+	n *= (1 + (n < 0) * -2);
 	len = 1;
 	while (n >= 10)
 	{
 		n /= 10;
 		++len;
 	}
-	*ret += len;
+	*ret += len + neg;
 }
 
 void	handle_uint(va_list *valist, int *ret)
@@ -116,10 +126,4 @@ void	handle_hex(int caps, va_list *valist, int *ret)
 		pow /= 16;
 		write(1, &tmp, 1);
 	}
-}
-
-void	handle_percent(int *ret)
-{
-	*ret += 1;
-	write(1, "%", 1);
 }

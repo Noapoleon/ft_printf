@@ -6,7 +6,7 @@
 /*   By: nlegrand <nlegrand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 22:01:14 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/10/02 00:43:10 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/10/02 15:32:21 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,31 @@ void	putconv(const char c, va_list *valist, int *ret)
 
 size_t	len_to_conv(const char *s)
 {
-	char *ptr;
+	char	*ptr;
 
 	ptr = (char *)s;
 	while (*ptr && (*ptr != '%'))
 		++ptr;
 	return (ptr - s);
+}
+
+void	handle_conversions(const char *s, int *ret, va_list *valist)
+{
+	size_t	lensub;
+
+	while (*s)
+	{
+		lensub = len_to_conv(s);
+		if (lensub == 0)
+		{
+			putconv(*(s + 1), valist, ret);
+			s += 2;
+		}
+		else
+		{
+			write(1, s, lensub);
+			*ret += lensub;
+			s += lensub;
+		}
+	}
 }
