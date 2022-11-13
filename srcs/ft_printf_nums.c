@@ -15,29 +15,14 @@
 int	hdl_di(va_list *valist)
 {
 	long	n;
-	int		neg;
-	int		len;
-	char	tmp[11];
-	char	*ptr;
+	char	*tmp;
 
 	n = va_arg(*valist, int);
-	n = (long)n * (1 - (neg = n < 0) * 2);
-	tmp[0] = '-';
-	len = neg;
-	while (n >= 10)
-	{
-		tmp[len++] = n % 10 + 48;
-		n /= 10;
-	}
-	tmp[len++] = n % 10 + 48;
-	ptr = tmp + len - 1;
-	while ((tmp + neg) < ptr)
-	{
-		n = tmp[neg];
-		tmp[neg++] = *ptr;
-		*ptr-- = (char)n;
-	}
-	write(1, tmp, len);
+	tmp = itoa(n);
+	if (tmp == NULL)
+		return (NULL);
+	print->ret += ft_strlen(tmp);
+	return (tmp);
 }
 
 

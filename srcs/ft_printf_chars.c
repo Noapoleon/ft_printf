@@ -12,22 +12,32 @@
 
 #include "libftprintf.h"
 
-int	hdl_char(va_list *valist)
+char	*hdl_c(t_print *print)
 {
 	char	c;
+	char	*tmp;
 
 	c = va_arg(*valist, char);
-	write(1, c, 1);
-	return (1);
+	tmp = malloc(sizeof(char) * 2);
+	if (tmp == NULL)
+		return (NULL);
+	tmp[0] = c;
+	tmp[1] = '\0';
+	return (tmp);
 }
 
-int	hdl_str(va_list *valist)
+char	*hdl_s(t_print *print)
 {
-	char	*s;
-	int		len;
+	char	*tmp;
 
-	s = va_arg(*valist, char *);
-	len = ft_strlen(s);
-	write(1, s, len);
-	return (len);
+	tmp = va_arg(*valist, char *);
+	if (tmp == NULL)
+	{
+		tmp = malloc(sizeof(char) * 7);
+		if (tmp == NULL)
+			return (NULL);
+		strlcpy(tmp, "(null)", 7);
+	}
+	print->ret += ft_strlen(tmp);
+	return (tmp);
 }

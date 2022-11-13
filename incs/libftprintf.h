@@ -31,7 +31,7 @@ typedef struct s_print
 	int		flags_s;
 	char	conv_s;
 	int		bad_s;
-	char	(*handler);
+	char	(*handler_s);
 
 }	t_print;
 
@@ -53,6 +53,6 @@ char	*hdl_i(t_print *print);
 char	*hdl_u(t_print *print);
 char	*hdl_x(t_print *print);
 char	*hdl_X(t_print *print);
-char	*hdl_%(t_print *print);
+char	*hdl_pp(t_print *print);
 
 #endif
