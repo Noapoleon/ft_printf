@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "libftprintf.h"
 
 // WHEN IMPLEMENTING FLAGS
 // change function 'putconv' for 'handleconv' so that there's no need

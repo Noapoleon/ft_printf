@@ -1,58 +1,51 @@
 # Project structure
-NAME	= libftprintf.a
-SRCDIR	= srcs
-OBJDIR	= objs
-INCDIR	= incs
-LIBDIR	= libs
-BINDIR	= bins
+NAME	=	libftprintf.a
+INCDIR	=	incs
+SRCDIR	=	srcs
+OBJDIR	=	objs
+LIBFT	=	libft
+
+# Files
+SRCS	:=	ft_printf.c \
+			ft_printf_utils.c \
+			ft_printf_nums.c \
+			ft_printf_chars.c
+OBJS	:=	$(SRCS:.c=.o)
+SRCS	:=	$(addprefix $(SRCDIR)/, $(SRCS))
+OBJS	:=	$(addprefix $(OBJDIR)/, $(OBJS))
+
+# Compiler options
+CC		=	cc
+CFLAGS	=	-Wall -Wextra -Werror -I./$(INCDIR)
 
 # Other
 RM		= rm -rf
 AR		= ar rcs
-LIBFT	= libft
 
-# Files
-SRCS	=	ft_printf.c \
-			ft_printf_utils.c \
-			ft_printf_chars.c \
-			ft_printf_nums.c
-OBJS	= $(addprefix $(OBJDIR)/, $(SRCS:.c=.o))
-HEDS	= $(INCDIR)/ft_printf.h
-
-# Compiler options
-CC		= gcc
-LIBS	= -lft
-CFLAGS	= -Wall -Wextra -Werror -I./$(INCDIR) -L./$(LIBDIR) $(LIBS)
-
-$(OBJDIR)/%.o: $(SRCDIR)/%.c $(HEDS)
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 all: $(NAME)
 
-$(NAME): makebuilddirs makelibft $(OBJS)
-	$(AR) $(BINDIR)/libft.a $(OBJS)
-	mv $(BINDIR)/libft.a $(BINDIR)/$(NAME)
-
-makelibft:
+$(NAME): $(OBJS)
 	make -C $(LIBFT)
-	cp $(LIBFT)/libft.a ./$(LIBDIR)/libft.a
-	cp $(LIBFT)/libft.a ./$(BINDIR)/libft.a
-
-makebuilddirs:
-	mkdir -p $(OBJDIR) $(BINDIR)
-
-test:
-	$(CC) -Wall -Wextra -Werror test.c -L./$(BINDIR) -lftprintf -I./$(INCDIR)
+	cp $(LIBFT)/libft.h incs/libft.h
+	cp $(LIBFT)/libft.a $(NAME)
+	$(AR) $(NAME) $(OBJS)
 
 clean:
 	$(RM) $(OBJS)
 	make clean -C $(LIBFT)
 
 fclean: clean
-	$(RM) $(BINDIR)/$(NAME)
-	$(RM) $(LIBDIR)/libft.a
+	$(RM) $(NAME)
 	$(RM) $(LIBFT)/libft.a
 
 re: fclean all
 
-.PHONY: all clean fclean re $(NAME) makelibft makebuilddirs test
+.PHONY: all re clean fclean
+
+test:
+	$(CC) $(CFLAGS) test.c -L./ -lftprintf
+names:
+	echo $(OBJS) $(SRCS)
