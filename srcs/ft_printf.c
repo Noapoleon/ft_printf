@@ -6,7 +6,7 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 19:25:46 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/12 19:20:21 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/13 16:52:58 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,15 @@
 
 int	ft_printf(const char *s, ...)
 {
-	int		ret;
 	va_list	valist;
-	t_list	*parts;
+	t_print print;
 
-	ret = 0;
 	va_start(valist, s);
-	parts = init_parts();
-	if ((parts == NULL) || (make_output(s, &valist, parts, &ret) == -1))
-		return (-1); // free accordingly
-	write_output(parts);
+	if (init_print(&print, s, valist) == -1)
+		return (-1);
+	if (make_output(&print) == -1)
+		return (va_end(valist), ft_lstclear(print->parts), -1);
+	write_n_free(printf->parts);
 	va_end(valist);
-	return (ret);
+	return (print->ret);
 }

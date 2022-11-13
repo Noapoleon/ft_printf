@@ -6,44 +6,41 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 16:34:53 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/12 21:11:14 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/13 17:51:37 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftprintf.h"
 
-//static int	len_to_conv(const char *s)
-//{
-//	const char	*og_s;
-//
-//	og_s = s;
-//	while (*s && *s != '%')
-//		++s;
-//	return (s - og_s);
-//}
-
-t_list	*init_parts()
+t_print	*init_print(t_print *print, const char *s, va_list *valist)
 {
-	// already protected, not tested
-	t_list	*beg;
+	// PROTECTED, NOT TESTED
 	char	*tmp;
 
+	tmp->s = s;
+	tmp->valist = valist;
+	tmp->ret = 0;
 	tmp = ft_strdup("\0");
 	if (tmp == NULL)
 		return (-1);
-	beg = ft_lstnew(tmp);
-	if (beg == NULL)
-		return (free(tmp), -1);
+	print->parts->content = tmp;
+	reset_state(print);
 	return (0);
 }
 
-int	write_output(t_list *out)
+//void	exit_print(print)
+//{
+//	va_end(print->valist);
+//	ft_lstclear(print->parts);
+//}
+
+int	write_n_free(t_list *parts)
 {
+	// check if the free logic is good
 	t_list	*curr;
 	t_list	*tmp;
 
-	//dont forget first one is '\0'
-	curr = out->next; // the ->next is for the first struct whose content is '\0'
+	curr = parts->next; // dont forget first one is '\0'
 	while (curr != NULL)
 	{
 		tmp = curr;
@@ -55,40 +52,55 @@ int	write_output(t_list *out)
 	return (0);
 }
 
-int	make_output(const char *s, va_list *valist, t_list *beg, int *ret)
+int	make_output(t_print *print)
 {
-	t_list *curr;
+	// CHECK PROTECTION
+	t_list	*curr;
 
-	curr = beg;
-	while (*s)
+	curr = print->parts;
+	while (*(print->s))
 	{
-		if (*ss = '%')
-			if (make_conv(&s, valist, &curr->next, ret) == -1)
-				return (-1); // free accordingly
+		if (*(print->s) == '%')
+			if (make_conv(print, curr) == -1)
+				return (-1);
 		else
-			if (make_str(&s, &curr->next, ret) == -1)
-				return (-1); // free accordingly
-
+			if (make_str(print, curr) == -1)
+				return (-1);
+		curr = curr->next;
 	}
 	return (0);
 }
 
-int make_str(char **s, t_list **part, int *ret)
+int make_str(t_print *print, t_list *prev)
 {
-	// already protected, not tested
+	// PROTECTED, NOT TESTED
 	char	*end;
 	char	*tmp;
 
-	end = *s;
+	end = print->s;
 	while (*end && *end != '%')
 		++end;
-	tmp = ft_substr(s, 0, end - s);
+	tmp = ft_substr(s, 0, end - print->s);
 	if (tmp == NULL)
 		return (-1);
-	*part = ft_lstnew(tmp);
-	if (*part == NULL)
+	prev->next = ft_lstnew(tmp);
+	if (prev->next == NULL)
 		return (free(tmp), -1);
-	*ret += end - s;
-	*s = end;
+	print->ret += end - print->s;
+	print->s = end;
+	return (0);
+}
+
+int	make_conv(t_print *print, t_list *prev)
+{
+	// PROTECTED, NOT TESTED
+	char	*tmp;
+
+	tmp = handle_convs(print);
+	if (tmp == NULL)
+		return (-1);
+	prev->next = ft_lstnew(tmp);
+	if (prev->next == NULL)
+		return (free(tmp), -1);
 	return (0);
 }
