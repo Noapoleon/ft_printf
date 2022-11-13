@@ -6,7 +6,7 @@
 /*   By: nlegrand <nlegrand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/24 17:48:35 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/09/13 18:22:21 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/11 15:10:46 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,7 @@
 
 # include <stdlib.h>
 # include <unistd.h>
-
-typedef struct s_list
-{
-	void			*content;
-	struct s_list	*next;
-}				t_list;
+# include <limits.h>
 
 int		ft_isalpha(int c);
 int		ft_isdigit(int c);
@@ -56,6 +51,14 @@ void	ft_putchar_fd(char c, int fd);
 void	ft_putstr_fd(char *s, int fd);
 void	ft_putendl_fd(char *s, int fd);
 void	ft_putnbr_fd(int n, int fd);
+
+// BONUS
+typedef struct s_list
+{
+	void			*content;
+	struct s_list	*next;
+}				t_list;
+
 t_list	*ft_lstnew(void *content);
 void	ft_lstadd_front(t_list **lst, t_list *new);
 int		ft_lstsize(t_list *lst);
@@ -65,5 +68,34 @@ void	ft_lstdelone(t_list *lst, void (*del)(void *));
 void	ft_lstclear(t_list **lst, void (*del)(void *));
 void	ft_lstiter(t_list *lst, void (*f)(void *));
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
+
+// GET_NEXT_LINE
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 128
+# endif
+
+typedef struct s_line
+{
+	char			buf[BUFFER_SIZE + 1];
+	struct s_line	*next;
+}				t_line;
+
+typedef struct s_fds
+{
+	int				fd;
+	char			buf[BUFFER_SIZE + 1];
+	struct s_fds	*next;
+}				t_fds;
+
+char	*get_next_line(int fd);
+char	*deplete_buf(char *buf);
+char	*get_fd_buf(int fd, t_fds **fds);
+void	remove_fd(int fd, t_fds **fds);
+int		read_line(int fd, t_line **line, int *len, char *buf);
+t_line	*read_one(int fd, int *ret, int *len, char *buf);
+char	*make_line(t_line **line, int len);
+void	split_buf_rest(char *tmpbuf, char *buf);
+void	clear_line(t_line **line);
+char	*get_endl(char *buf);
 
 #endif

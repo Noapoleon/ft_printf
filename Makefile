@@ -7,9 +7,7 @@ LIBFT	=	libft
 
 # Files
 SRCS	:=	ft_printf.c \
-			ft_printf_utils.c \
-			ft_printf_nums.c \
-			ft_printf_chars.c
+			ft_printf_utils.c
 OBJS	:=	$(SRCS:.c=.o)
 SRCS	:=	$(addprefix $(SRCDIR)/, $(SRCS))
 OBJS	:=	$(addprefix $(OBJDIR)/, $(OBJS))
@@ -46,6 +44,7 @@ re: fclean all
 .PHONY: all re clean fclean
 
 test:
-	$(CC) $(CFLAGS) test.c -L./ -lftprintf
-names:
-	echo $(OBJS) $(SRCS)
+	cc -Wall -Wextra -Werror test.c -L./ -lftprintf -I./incs
+lists:
+	echo $(SRCS)
+	echo $(OBJS)

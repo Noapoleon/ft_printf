@@ -1,9 +1,0 @@
-Some functions use a fixed size string (e.g.: putaddr) for hex values but if the address is longer it won't work.
-On systems like 42's computers memory addresses have 16 chars but on my desktop they only have 12 chars.
-Implement something that will make this work on different systems.
-
-I dont know what the difference is between the 'd' and 'i' conversions.
-
-The way the '%' is handled is problematic as it is counted in the number of conversions so I'm not sure what the behavior is with the va_list object.
-Further debugging required.
-EDIT1: just did some tests with the '%' conversion and it doesn't seem to be causing problems but I'm not sure why. I would need to reread my code.

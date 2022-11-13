@@ -3,92 +3,92 @@
 /*                                                        :::      ::::::::   */
 /*   ft_printf_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nlegrand <nlegrand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/26 22:01:14 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/10/02 15:32:21 by nlegrand         ###   ########.fr       */
+/*   Created: 2022/11/11 16:34:53 by nlegrand          #+#    #+#             */
+/*   Updated: 2022/11/12 21:11:14 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftprintf.h"
 
-int	is_setchar(const char *set, const char c)
+//static int	len_to_conv(const char *s)
+//{
+//	const char	*og_s;
+//
+//	og_s = s;
+//	while (*s && *s != '%')
+//		++s;
+//	return (s - og_s);
+//}
+
+t_list	*init_parts()
 {
-	while (*set)
+	// already protected, not tested
+	t_list	*beg;
+	char	*tmp;
+
+	tmp = ft_strdup("\0");
+	if (tmp == NULL)
+		return (-1);
+	beg = ft_lstnew(tmp);
+	if (beg == NULL)
+		return (free(tmp), -1);
+	return (0);
+}
+
+int	write_output(t_list *out)
+{
+	t_list	*curr;
+	t_list	*tmp;
+
+	//dont forget first one is '\0'
+	curr = out->next; // the ->next is for the first struct whose content is '\0'
+	while (curr != NULL)
 	{
-		if (c == *set)
-			return (1);
-		++set;
+		tmp = curr;
+		if (write(1, curr->content, ft_strlen(curr->content)))
+			return (ft_lstclear(curr), -1);
+		curr = curr->next;
+		free (tmp);
 	}
 	return (0);
 }
 
-int	count_conversions(const char *s)
+int	make_output(const char *s, va_list *valist, t_list *beg, int *ret)
 {
-	int	count;
+	t_list *curr;
 
-	count = 0;
+	curr = beg;
 	while (*s)
 	{
-		if (*s == '%' && is_setchar(CONV_SET, *(s + 1)))
-		{
-			s += 1;
-			++count;
-		}
-		else if (*s == '%')
-			return (-1);
-		++s;
-	}
-	return (count);
-}
-
-void	putconv(const char c, va_list *valist, int *ret)
-{
-	if (c == 'c')
-		handle_char(valist, ret);
-	else if (c == 's')
-		handle_str(valist, ret);
-	else if (c == 'p')
-		handle_ptr(valist, ret);
-	else if ((c == 'd') || (c == 'i'))
-		handle_di(valist, ret);
-	else if (c == 'u')
-		handle_uint(valist, ret);
-	else if (c == 'x')
-		handle_hex(0, valist, ret);
-	else if (c == 'X')
-		handle_hex(1, valist, ret);
-	else if (c == '%')
-		handle_percent(ret);
-}
-
-size_t	len_to_conv(const char *s)
-{
-	char	*ptr;
-
-	ptr = (char *)s;
-	while (*ptr && (*ptr != '%'))
-		++ptr;
-	return (ptr - s);
-}
-
-void	handle_conversions(const char *s, int *ret, va_list *valist)
-{
-	size_t	lensub;
-
-	while (*s)
-	{
-		lensub = len_to_conv(s);
-		if (lensub == 0)
-		{
-			putconv(*(s + 1), valist, ret);
-			s += 2;
-		}
+		if (*ss = '%')
+			if (make_conv(&s, valist, &curr->next, ret) == -1)
+				return (-1); // free accordingly
 		else
-		{
-			write(1, s, lensub);
-			*ret += lensub;
-			s += lensub;
-		}
+			if (make_str(&s, &curr->next, ret) == -1)
+				return (-1); // free accordingly
+
 	}
+	return (0);
+}
+
+int make_str(char **s, t_list **part, int *ret)
+{
+	// already protected, not tested
+	char	*end;
+	char	*tmp;
+
+	end = *s;
+	while (*end && *end != '%')
+		++end;
+	tmp = ft_substr(s, 0, end - s);
+	if (tmp == NULL)
+		return (-1);
+	*part = ft_lstnew(tmp);
+	if (*part == NULL)
+		return (free(tmp), -1);
+	*ret += end - s;
+	*s = end;
+	return (0);
 }

@@ -1,28 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf_nums.c                                   :+:      :+:    :+:   */
+/*   ft_printf_hexs.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/11 22:30:00 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/12 16:09:44 by nlegrand         ###   ########.fr       */
+/*   Created: 2022/11/11 22:59:56 by nlegrand          #+#    #+#             */
+/*   Updated: 2022/11/12 16:53:03 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftprintf.h"
 
-int	hdl_di(va_list *valist)
+char	*make_hexstr(size_t dec)
 {
-	long	n;
-	int		neg;
+	char	*
 	int		len;
-	char	tmp[11];
+	char	tmp[16];
 	char	*ptr;
 
-	n = va_arg(*valist, int);
-	n = (long)n * (1 - (neg = n < 0) * 2);
-	tmp[0] = '-';
 	len = neg;
 	while (n >= 10)
 	{
@@ -30,7 +26,7 @@ int	hdl_di(va_list *valist)
 		n /= 10;
 	}
 	tmp[len++] = n % 10 + 48;
-	ptr = tmp + len - 1;
+	p tr = tmp + len - 1;
 	while ((tmp + neg) < ptr)
 	{
 		n = tmp[neg];
@@ -40,30 +36,36 @@ int	hdl_di(va_list *valist)
 	write(1, tmp, len);
 }
 
-
-int	hdl_uint(va_list *valist)
+int	handle_hex_lc(va_list *valist)
 {
-	long	nn;
-	int		neg;
-	int		len;
-	char	tmp[11];
-	char	*ptr;
 
-	nn = va_arg(*valist, unsigned int);
-	tmp[0] = '-';
-	len = neg;
-	while (nn >= 10)
+	return (len);
+}
+
+int	handle_hex_uc(va_list *valist)
+{
+	
+	return (len);
+}
+
+int	handle_ptr(va_list *valist)
+{
+	size_t	ptr_n;
+	char	*ptr_s;
+	int		len;
+
+	ptr_n = va_arg(*valist, size_t);
+	if (ptr_n == 0)
 	{
-		tmp[len++] = nn % 10 + 48;
-		nn /= 10;
+		*ret += 5;
+		write(1, "(nil)", 5);
+		return ;
 	}
-	tmp[len++] = nn % 10 + 48;
-	ptr = tmp + len - 1;
-	while ((tmp + neg) < ptr)
-	{
-		nn = tmp[neg];
-		tmp[neg++] = *ptr;
-		*ptr-- = (char)nn;
-	}
-	write(1, tmp, len);
+	ptr_s = make_hex_str(ptr_n);
+	if (ptr_s == NULL)
+		return ;
+	write(1, "0x", 2);
+	write(1, ptr_s, ft_strlen(ptr_s));
+	*ret += (ft_strlen(ptr_s) + 2);
+	free(ptr_s);
 }
