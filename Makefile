@@ -7,13 +7,17 @@ LIBFT	=	libft
 
 # Files
 SRCS	:=	ft_printf.c \
-			ft_printf_utils.c
+			ft_printf_utils.c \
+			handler_utils.c \
+			handler_nums.c \
+			handler_chars.c \
+			handler_hexs.c
 OBJS	:=	$(SRCS:.c=.o)
 SRCS	:=	$(addprefix $(SRCDIR)/, $(SRCS))
 OBJS	:=	$(addprefix $(OBJDIR)/, $(OBJS))
 
 # Compiler options
-CC		=	cc
+CC		=	cc -g3
 CFLAGS	=	-Wall -Wextra -Werror -I./$(INCDIR)
 
 # Other
@@ -44,7 +48,7 @@ re: fclean all
 .PHONY: all re clean fclean
 
 test:
-	cc -Wall -Wextra -Werror test.c -L./ -lftprintf -I./incs
+	cc -g3 -Wall -Wextra -Werror test.c -L./ -lftprintf -I./incs
 lists:
 	echo $(SRCS)
 	echo $(OBJS)

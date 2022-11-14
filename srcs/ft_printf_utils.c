@@ -6,50 +6,45 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 16:34:53 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/13 17:51:37 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/14 04:08:08 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftprintf.h"
 
-t_print	*init_print(t_print *print, const char *s, va_list *valist)
+int	init_print(t_print *print, const char *s, va_list *valist)
 {
 	// PROTECTED, NOT TESTED
 	char	*tmp;
 
-	tmp->s = s;
-	tmp->valist = valist;
-	tmp->ret = 0;
+	print->s = (char *)s;
+	print->valist = valist;
+	print->ret = 0;
 	tmp = ft_strdup("\0");
 	if (tmp == NULL)
 		return (-1);
+	print->parts = malloc(sizeof(t_list));
+	if (print->parts == NULL)
+		return (free(tmp), -1);
 	print->parts->content = tmp;
-	reset_state(print);
 	return (0);
 }
 
-//void	exit_print(print)
-//{
-//	va_end(print->valist);
-//	ft_lstclear(print->parts);
-//}
-
-int	write_n_free(t_list *parts)
+void	write_n_free(t_list **parts)
 {
 	// check if the free logic is good
 	t_list	*curr;
 	t_list	*tmp;
 
-	curr = parts->next; // dont forget first one is '\0'
+	curr = (*parts)->next; // dont forget first one is '\0'
 	while (curr != NULL)
 	{
 		tmp = curr;
-		if (write(1, curr->content, ft_strlen(curr->content)))
-			return (ft_lstclear(curr), -1);
+		if (write(1, curr->content, ft_strlen(curr->content)) == -1)
+			return ((void)ft_lstclear(&curr, free));
 		curr = curr->next;
 		free (tmp);
 	}
-	return (0);
 }
 
 int	make_output(t_print *print)
@@ -61,8 +56,10 @@ int	make_output(t_print *print)
 	while (*(print->s))
 	{
 		if (*(print->s) == '%')
+		{
 			if (make_conv(print, curr) == -1)
 				return (-1);
+		}
 		else
 			if (make_str(print, curr) == -1)
 				return (-1);
@@ -80,7 +77,7 @@ int make_str(t_print *print, t_list *prev)
 	end = print->s;
 	while (*end && *end != '%')
 		++end;
-	tmp = ft_substr(s, 0, end - print->s);
+	tmp = ft_substr(print->s, 0, end - print->s);
 	if (tmp == NULL)
 		return (-1);
 	prev->next = ft_lstnew(tmp);

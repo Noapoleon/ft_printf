@@ -1,54 +1,65 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf_nums.c                                   :+:      :+:    :+:   */
+/*   handler_nums.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 22:30:00 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/12 16:09:44 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/14 02:52:29 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftprintf.h"
 
-int	hdl_di(va_list *valist)
+char	*hdl_di(t_print *print)
 {
-	long	n;
+	int		n;
 	char	*tmp;
 
-	n = va_arg(*valist, int);
-	tmp = itoa(n);
+	n = va_arg(*(print->valist), int);
+	tmp = ft_itoa(n);
 	if (tmp == NULL)
 		return (NULL);
 	print->ret += ft_strlen(tmp);
 	return (tmp);
 }
 
-
-int	hdl_uint(va_list *valist)
+char	*hdl_u(t_print *print)
 {
-	long	nn;
-	int		neg;
-	int		len;
-	char	tmp[11];
-	char	*ptr;
+	unsigned int	n;
+	char			*tmp;
 
-	nn = va_arg(*valist, unsigned int);
-	tmp[0] = '-';
-	len = neg;
-	while (nn >= 10)
+	n = va_arg(*(print->valist), unsigned int);
+	tmp = uitoa(n);
+	if (tmp == NULL)
+		return (NULL);
+	print->ret += ft_strlen(tmp);
+	return (tmp);
+}
+
+char	*uitoa(unsigned int n)
+{
+	long	pow;
+	int		len_pow;
+	char	*tmp;
+
+	pow = 1;
+	len_pow = 1;
+	while ((n / pow) >= 10)
 	{
-		tmp[len++] = nn % 10 + 48;
-		nn /= 10;
+		pow *= 10;
+		++len_pow;
 	}
-	tmp[len++] = nn % 10 + 48;
-	ptr = tmp + len - 1;
-	while ((tmp + neg) < ptr)
+	tmp = (char *)malloc(sizeof(char) * (len_pow + 1));
+	if (tmp == NULL)
+		return (NULL);
+	len_pow = 0;
+	while (pow > 0)
 	{
-		nn = tmp[neg];
-		tmp[neg++] = *ptr;
-		*ptr-- = (char)nn;
+		tmp[len_pow++] = '0' + ((n / pow) % 10);
+		pow /= 10;
 	}
-	write(1, tmp, len);
+	tmp[len_pow] = '\0';
+	return (tmp);
 }
