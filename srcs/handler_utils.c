@@ -6,13 +6,13 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/13 14:30:18 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/14 02:46:24 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/14 18:42:15 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftprintf.h"
 
-char	*handle_convs(t_print *print)
+char	*handle_convs(t_print *print, va_list valist)
 {
 	char		*tmp;
 	char		*end;
@@ -25,7 +25,7 @@ char	*handle_convs(t_print *print)
 		print->ret += end - print->s;
 	}
 	else
-		tmp = (print->handler_s)(print);
+		tmp = (print->handler_s)(print, valist);
 	if (tmp == NULL)
 		return (NULL);
 	print->s = end;
@@ -43,7 +43,7 @@ void	reset_state(t_print *print)
 void	set_conv_state(t_print *print, char **end)
 {
 	// CHANGE THIS FUNCTION TO HANDLING BONUSES
-	static char	*(*handlers[])(t_print *print) = {hdl_c, hdl_s, hdl_p, hdl_di,
+	static char	*(*handlers[])(t_print *print, va_list valist) = {hdl_c, hdl_s, hdl_p, hdl_di,
 		hdl_di, hdl_u, hdl_x, hdl_x, hdl_ps};
 	char	*i;
 

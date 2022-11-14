@@ -48,7 +48,7 @@ re: fclean all
 .PHONY: all re clean fclean
 
 test:
-	cc -g3 -Wall -Wextra -Werror test.c -L./ -lftprintf -I./incs
+	cc -g3  test.c -L./ -lftprintf -I./incs
 lists:
 	echo $(SRCS)
 	echo $(OBJS)

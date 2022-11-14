@@ -6,19 +6,18 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 16:34:53 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/14 04:41:12 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/14 18:38:32 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftprintf.h"
 
-int	init_print(t_print *print, const char *s, va_list *valist)
+int	init_print(t_print *print, const char *s)
 {
 	// PROTECTED, NOT TESTED
 	char	*tmp;
 
 	print->s = (char *)s;
-	print->valist = valist;
 	print->ret = 0;
 	tmp = ft_strdup("\0");
 	if (tmp == NULL)
@@ -30,7 +29,7 @@ int	init_print(t_print *print, const char *s, va_list *valist)
 	return (0);
 }
 
-void	write_n_free(t_list **parts)
+void	write_n_free(t_list **parts, int fd)
 {
 	// check if the free logic is good
 	t_list	*curr;
@@ -40,14 +39,14 @@ void	write_n_free(t_list **parts)
 	while (curr != NULL)
 	{
 		tmp = curr;
-		if (write(OUT_FD, curr->content, ft_strlen(curr->content)) == -1)
+		if (write(fd, curr->content, ft_strlen(curr->content)) == -1)
 			return ((void)ft_lstclear(&curr, free));
 		curr = curr->next;
 		free (tmp);
 	}
 }
 
-int	make_output(t_print *print)
+int	make_output(t_print *print, va_list valist)
 {
 	// CHECK PROTECTION
 	t_list	*curr;
@@ -57,7 +56,7 @@ int	make_output(t_print *print)
 	{
 		if (*(print->s) == '%')
 		{
-			if (make_conv(print, curr) == -1)
+			if (make_conv(print, valist, curr) == -1)
 				return (-1);
 		}
 		else
@@ -88,12 +87,12 @@ int make_str(t_print *print, t_list *prev)
 	return (0);
 }
 
-int	make_conv(t_print *print, t_list *prev)
+int	make_conv(t_print *print, va_list valist, t_list *prev)
 {
 	// PROTECTED, NOT TESTED
 	char	*tmp;
 
-	tmp = handle_convs(print);
+	tmp = handle_convs(print, valist);
 	if (tmp == NULL)
 		return (-1);
 	prev->next = ft_lstnew(tmp);
