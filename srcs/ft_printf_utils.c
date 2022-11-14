@@ -42,8 +42,9 @@ void	write_n_free(t_list **parts, int fd)
 		if (write(fd, curr->content, ft_strlen(curr->content)) == -1)
 			return ((void)ft_lstclear(&curr, free));
 		curr = curr->next;
-		free (tmp);
+		ft_lstdelone(tmp, free);
 	}
+	ft_lstdelone(*parts, free);
 }
 
 int	make_output(t_print *print, va_list valist)
@@ -72,6 +73,7 @@ int make_str(t_print *print, t_list *prev)
 	// PROTECTED, NOT TESTED
 	char	*end;
 	char	*tmp;
+	t_list	*new;
 
 	end = print->s;
 	while (*end && *end != '%')
@@ -79,9 +81,13 @@ int make_str(t_print *print, t_list *prev)
 	tmp = ft_substr(print->s, 0, end - print->s);
 	if (tmp == NULL)
 		return (-1);
-	prev->next = ft_lstnew(tmp);
-	if (prev->next == NULL)
+	new = ft_lstnew(tmp);
+	if (new == NULL)
 		return (free(tmp), -1);
+	if (prev == NULL)
+		print->parts = new;
+	else
+		prev->next = new;
 	print->ret += end - print->s;
 	print->s = end;
 	return (0);
@@ -91,12 +97,17 @@ int	make_conv(t_print *print, va_list valist, t_list *prev)
 {
 	// PROTECTED, NOT TESTED
 	char	*tmp;
+	t_list	*new;
 
 	tmp = handle_convs(print, valist);
 	if (tmp == NULL)
 		return (-1);
-	prev->next = ft_lstnew(tmp);
-	if (prev->next == NULL)
+	new = ft_lstnew(tmp);
+	if (new == NULL)
 		return (free(tmp), -1);
+	if (prev == NULL)
+		print->parts = new;
+	else
+		prev->next = new;
 	return (0);
 }

@@ -29,11 +29,14 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJDIR) $(OBJS)
 	make -C $(LIBFT)
 	cp $(LIBFT)/libft.h incs/libft.h
 	cp $(LIBFT)/libft.a $(NAME)
 	$(AR) $(NAME) $(OBJS)
+
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
 
 clean:
 	$(RM) $(OBJS)
