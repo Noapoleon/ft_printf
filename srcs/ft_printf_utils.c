@@ -6,7 +6,7 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 16:34:53 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/14 04:08:08 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/14 04:41:12 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	write_n_free(t_list **parts)
 	while (curr != NULL)
 	{
 		tmp = curr;
-		if (write(1, curr->content, ft_strlen(curr->content)) == -1)
+		if (write(OUT_FD, curr->content, ft_strlen(curr->content)) == -1)
 			return ((void)ft_lstclear(&curr, free));
 		curr = curr->next;
 		free (tmp);

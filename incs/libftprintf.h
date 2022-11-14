@@ -6,7 +6,7 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 15:46:40 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/14 04:12:09 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/14 04:41:45 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,9 @@
 # include <stdlib.h>
 # include <stdarg.h>
 
-#include <stdio.h>
-
+# ifndef OUTFD
+#  define OUT_FD 1
+# endif
 # define CONV_SET "cspdiuxX%"
 # define HEX_SET "0123456789abcdef"
 
