@@ -23,28 +23,53 @@ void	init_print(t_print *print, const char *s)
 	print->bad_s = 0;
 }
 
-int fill_buf(t_print *print)
+int fill_buf(t_print *print, char *src, int size) // NOT TESTED
 {
-	// NOT TESTED
+	// if src == print->s dont put anything other than 0 for size
+	// actually it's fine with some stuff like 's' conversion
+	// will check if true for other ones as well
 	int		len;
-	char	*s;
 
-	s = print->s;
 	len = 0;
-	while (s[len] && (s[len] != '%'))
+	while ((src[len] && src[len] != '%') || (size == 0 && len < size))
 	{
 		if (print->pos == PRINT_SIZE)
 		{
 			print->pos = 0;
-			if (write(PRINT_FD, s, PRINT_SIZE) == -1)
+			if (write(PRINT_FD, src, PRINT_SIZE) == -1)
 				return (-1);
 		}
-		print->buf[print->pos++] = s[len++];
+		print->buf[print->pos++] = src[len++];
 	}
 	print->ret += len;
-	print->s = s;
+	if (src == print->s)
+		print->s += len;
 	return (0);
 }
+// DONT REMOVE THIS COMMENT YET
+// IF NEEDED SAVE INTO A FILE BECAUSE IT'S NOT PRESENT ON OTHER BRANCHES
+//int fill_buf(t_print *print)
+//{
+//	// NOT TESTED
+//	int		len;
+//	char	*s;
+//
+//	s = print->s;
+//	len = 0;
+//	while (s[len] && (s[len] != '%'))
+//	{
+//		if (print->pos == PRINT_SIZE)
+//		{
+//			print->pos = 0;
+//			if (write(PRINT_FD, s, PRINT_SIZE) == -1)
+//				return (-1);
+//		}
+//		print->buf[print->pos++] = s[len++];
+//	}
+//	print->ret += len;
+//	print->s = s;
+//	return (0);
+//}
 
 int	set_conv_state(t_print *print)
 {

@@ -33,12 +33,13 @@ int	w_vdprintf(int fd, const char *s, va_list valist)
 	{
 		if (*(print.s) == '%')
 		{
-			if ((set_conv_state(print) == -1) && (fill_buf(&print) == -1))
+			set_conv_state(print);
+			if (print.bad_s && (fill_buf(&print, print.s, 0) == -1))
 				return (-1);
 			else if (print->handler_s(&print, valist) == -1)
 				return (-1);
 		}
-		else if (fill_buf(&print) == -1)
+		else if (fill_buf(&print, print.s, 0) == -1)
 			return (-1);
 	}
 	return (print.ret);
