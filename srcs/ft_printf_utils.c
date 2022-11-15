@@ -12,13 +12,15 @@
 
 #include "libftprintf.h"
 
-void	init_print(t_print *print, const char *s)
+void	init_print(t_print *print, const char *s, int fd)
 {
 	print->s = (char *)s;
+	print->fd = fd;
 	print->ret = 0;
+	print->buf[0] = '\0';
 	print->pos = 0;
-	print->conv_s = 0
-	print->flag_s = 0;
+	print->conv_s = '\0';
+	print->flags_s = 0;
 	print->handler_s = NULL;
 	print->bad_s = 0;
 }
@@ -36,7 +38,7 @@ int fill_buf(t_print *print, char *src, int size) // NOT TESTED
 		if (print->pos == PRINT_SIZE)
 		{
 			print->pos = 0;
-			if (write(PRINT_FD, src, PRINT_SIZE) == -1)
+			if (write(print->fd, src, PRINT_SIZE) == -1)
 				return (-1);
 		}
 		print->buf[print->pos++] = src[len++];
@@ -71,17 +73,17 @@ int fill_buf(t_print *print, char *src, int size) // NOT TESTED
 //	return (0);
 //}
 
-int	set_conv_state(t_print *print)
+void	set_conv_state(t_print *print)
 {
 	// CHANGE THIS FUNCTION FOR HANDLING BONUSES
-	static char	*(*handlers[])(t_print *print, va_list valist) =
+	static int	(*handlers[])(t_print *print, va_list valist) =
 	{hdl_c, hdl_s, hdl_p, hdl_di, hdl_di, hdl_u, hdl_x, hdl_x, hdl_ps};
 	char	*i;
 
 	print->conv_s = *(print->s + 1);
 	i = ft_strchr(CONV_SET, print->conv_s);
 	if (i == NULL)
-		return (-1);
+		return ((void)(print->bad_s = 1));
 	print->handler_s = handlers[i - CONV_SET];
 	print->s += 2; // THIS LINE SPECIFICALLY BUT WAY MORE THAN JUST THAT
 }

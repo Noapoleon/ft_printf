@@ -12,7 +12,7 @@
 
 #include "libftprintf.h"
 
-char	*hdl_di(t_print *print, va_list valist)
+int	hdl_di(t_print *print, va_list valist)
 {
 	int		n;
 	char	*tmp;
@@ -20,12 +20,13 @@ char	*hdl_di(t_print *print, va_list valist)
 	n = va_arg(valist, int);
 	tmp = ft_itoa(n);
 	if (tmp == NULL)
-		return (NULL);
-	print->ret += ft_strlen(tmp);
-	return (tmp);
+		return (-1);
+	if (fill_buf(print, tmp, 0) == -1)
+		return (free(tmp), -1);
+	return (free(tmp), 0);
 }
 
-char	*hdl_u(t_print *print, va_list valist)
+int	hdl_u(t_print *print, va_list valist)
 {
 	unsigned int	n;
 	char			*tmp;
@@ -33,7 +34,8 @@ char	*hdl_u(t_print *print, va_list valist)
 	n = va_arg(valist, unsigned int);
 	tmp = uitoa(n);
 	if (tmp == NULL)
-		return (NULL);
-	print->ret += ft_strlen(tmp);
-	return (tmp);
+		return (-1);
+	if (fill_buf(print, tmp, 0) == -1)
+		return (free(tmp), -1);
+	return (free(tmp), 0);
 }
