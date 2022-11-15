@@ -6,7 +6,7 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 22:43:10 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/14 18:53:18 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/15 17:35:08 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,16 @@
 
 int	hdl_c(t_print *print, va_list valist)
 {
-	char	c;
+	unsigned char	c;
 
-	c = va_arg(valist, int);
-	if (fill_buf(print, &c, 1) == -1)
+	if (print->conv_s == '%' && fill_buf(print, "%", 1) == -1)
 		return (-1);
+	else if (print->conv_s != '%')
+	{
+		c = va_arg(valist, int);
+		if (fill_buf(print, &c, 1) == -1)
+			return (-1);
+	}
 	return (0);
 }
 
@@ -37,13 +42,5 @@ int	hdl_s(t_print *print, va_list valist)
 //	free(tmp); // not sure that I need to free this here, va_end might do it on it's own
 // if freeing is actually needed put it BEFORE the return -1 you idiot
 // after thinking a bit i'm probably not meant to free pointers from va_arg as they're from the array of parameters (...)
-	return (0);
-}
-
-int	hdl_ps(t_print *print, va_list valist)
-{
-	(void)valist;
-	if (fill_buf(print, "%", 1) == -1)
-		return (-1);
 	return (0);
 }
