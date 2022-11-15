@@ -42,6 +42,8 @@ int	w_vdprintf(int fd, const char *s, va_list valist)
 		else if (fill_buf(&print, print.s, 0) == -1)
 			return (-1);
 	}
+	if (write(fd, print.buf, print.pos) == -1)
+		return (-1);
 	return (print.ret);
 }
 

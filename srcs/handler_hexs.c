@@ -33,6 +33,8 @@ int	hdl_p(t_print *print, va_list valist)
 	char	*old;
 
 	x = va_arg(valist, size_t);
+	if (x == 0)
+		return (fill_buf(print, "(nil)", 0));
 	tmp = make_hexstr(x, 0);
 	if (tmp == NULL)
 		return (-1);

@@ -27,9 +27,12 @@ int	hdl_s(t_print *print, va_list valist)
 	char	*tmp;
 
 	tmp = va_arg(valist, char *);
-	if ((tmp == NULL) && (fill_buf(print, "(null)", 0) == -1))
-		return (-1);
-	else if (fill_buf(print, tmp, 0) == -1)
+	if (tmp == NULL)
+	{
+		if (fill_buf(print, "(null)", 0) == -1)
+			return (-1);
+	}
+	else if (fill_buf(print, tmp, -1) == -1)
 		return (-1);
 //	free(tmp); // not sure that I need to free this here, va_end might do it on it's own
 // if freeing is actually needed put it BEFORE the return -1 you idiot
@@ -40,7 +43,7 @@ int	hdl_s(t_print *print, va_list valist)
 int	hdl_ps(t_print *print, va_list valist)
 {
 	(void)valist;
-	if (fill_buf(print, "%", 0) == -1)
+	if (fill_buf(print, "%", 1) == -1)
 		return (-1);
 	return (0);
 }

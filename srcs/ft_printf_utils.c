@@ -25,7 +25,7 @@ void	init_print(t_print *print, const char *s, int fd)
 	print->bad_s = 0;
 }
 
-int fill_buf(t_print *print, char *src, int size) // NOT TESTED
+int fill_buf(t_print *print, char *s, int n) // NOT TESTED
 {
 	// if src == print->s dont put anything other than 0 for size
 	// actually it's fine with some stuff like 's' conversion
@@ -33,18 +33,18 @@ int fill_buf(t_print *print, char *src, int size) // NOT TESTED
 	int		len;
 
 	len = 0;
-	while ((src[len] && src[len] != '%') || (size == 0 && len < size))
+	while ((s[len] && (s[len] != '%' || n == -1)) || (n != 0 && len < n))
 	{
 		if (print->pos == PRINT_SIZE)
 		{
 			print->pos = 0;
-			if (write(print->fd, src, PRINT_SIZE) == -1)
+			if (write(print->fd, s, PRINT_SIZE) == -1)
 				return (-1);
 		}
-		print->buf[print->pos++] = src[len++];
+		print->buf[print->pos++] = s[len++];
 	}
 	print->ret += len;
-	if (src == print->s)
+	if (s == print->s)
 		print->s += len;
 	return (0);
 }
