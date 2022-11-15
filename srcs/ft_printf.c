@@ -28,11 +28,19 @@ int	w_vdprintf(int fd, const char *s, va_list valist)
 {
 	t_print print;
 
-	if (init_print(&print, s) == -1)
-		return (-1);
-	if (make_output(&print, valist) == -1)
-		return (ft_lstclear(&(print.parts), free), -1);
-	write_n_free(&(print.parts), fd);
+	init_print(&print, s);
+	while (*(print.s))
+	{
+		if (*(print.s) == '%')
+		{
+			if ((set_conv_state(print) == -1) && (fill_buf(&print) == -1))
+				return (-1);
+			else if (print->handler_s(&print, valist) == -1)
+				return (-1);
+		}
+		else if (fill_buf(&print) == -1)
+			return (-1);
+	}
 	return (print.ret);
 }
 

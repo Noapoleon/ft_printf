@@ -43,32 +43,3 @@ char	*hdl_p(t_print *print, va_list valist)
 	print->ret += ft_strlen(tmp);
 	return (tmp);
 }
-
-char	*make_hexstr(size_t dec, int caps)
-{
-	size_t	pow;
-	int		len;
-	char	*tmp;
-
-	pow = 1;
-	len = 1;
-	while ((dec / pow) >= 16)
-	{
-		pow *= 16;
-		++len;
-	}
-	tmp = malloc(sizeof(char) * (len + 1));
-	if (tmp == NULL)
-		return (NULL);
-	len = 0;
-	while (pow > 0)
-	{
-		tmp[len] = *(HEX_SET + ((dec / pow) % 16));
-		if (ft_isalpha(tmp[len]) && caps)
-			tmp[len] -= 32;
-		++len;
-		pow /= 16;
-	}
-	tmp[len] = '\0';
-	return (tmp);
-}

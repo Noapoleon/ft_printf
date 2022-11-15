@@ -12,46 +12,57 @@
 
 #include "libftprintf.h"
 
-char	*handle_convs(t_print *print, va_list valist)
+char	*make_hexstr(size_t dec, int caps)
 {
-	char		*tmp;
-	char		*end;
+	size_t	pow;
+	int		len;
+	char	*tmp;
 
-	reset_state(print);
-	set_conv_state(print, &end);
-	if (print->bad_s)
+	pow = 1;
+	len = 1;
+	while ((dec / pow) >= 16)
 	{
-		tmp = ft_substr(print->s, 0, end - print->s);
-		print->ret += end - print->s;
+		pow *= 16;
+		++len;
 	}
-	else
-		tmp = (print->handler_s)(print, valist);
+	tmp = malloc(sizeof(char) * (len + 1));
 	if (tmp == NULL)
 		return (NULL);
-	print->s = end;
+	len = 0;
+	while (pow > 0)
+	{
+		tmp[len] = *(HEX_SET + ((dec / pow) % 16));
+		if (ft_isalpha(tmp[len]) && caps)
+			tmp[len] -= 32;
+		++len;
+		pow /= 16;
+	}
+	tmp[len] = '\0';
 	return (tmp);
 }
 
-void	reset_state(t_print *print)
+char	*uitoa(unsigned int n)
 {
-	print->flags_s = 0;
-	print->conv_s = 0;
-	print->bad_s = 0;
-	print->handler_s = NULL;
+	long	pow;
+	int		len_pow;
+	char	*tmp;
+
+	pow = 1;
+	len_pow = 1;
+	while ((n / pow) >= 10)
+	{
+		pow *= 10;
+		++len_pow;
+	}
+	tmp = (char *)malloc(sizeof(char) * (len_pow + 1));
+	if (tmp == NULL)
+		return (NULL);
+	len_pow = 0;
+	while (pow > 0)
+	{
+		tmp[len_pow++] = '0' + ((n / pow) % 10);
+		pow /= 10;
+	}
+	tmp[len_pow] = '\0';
+	return (tmp);
 }
-
-void	set_conv_state(t_print *print, char **end)
-{
-	// CHANGE THIS FUNCTION TO HANDLING BONUSES
-	static char	*(*handlers[])(t_print *print, va_list valist) = {hdl_c, hdl_s, hdl_p, hdl_di,
-		hdl_di, hdl_u, hdl_x, hdl_x, hdl_ps};
-	char	*i;
-
-	print->conv_s = *(print->s + 1);
-	i = ft_strchr(CONV_SET, print->conv_s);
-	if (i == NULL)
-		return ((void)(print->bad_s = 1));
-	print->handler_s = handlers[i - CONV_SET];
-	*end = print->s + 2;
-}
-

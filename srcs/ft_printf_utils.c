@@ -12,102 +12,51 @@
 
 #include "libftprintf.h"
 
-int	init_print(t_print *print, const char *s)
+void	init_print(t_print *print, const char *s)
 {
-	// PROTECTED, NOT TESTED
-	char	*tmp;
-
 	print->s = (char *)s;
 	print->ret = 0;
-	tmp = ft_strdup("\0");
-	if (tmp == NULL)
-		return (-1);
-	print->parts = malloc(sizeof(t_list));
-	if (print->parts == NULL)
-		return (free(tmp), -1);
-	print->parts->content = tmp;
-	return (0);
+	print->pos = 0;
+	print->conv_s = 0
+	print->flag_s = 0;
+	print->handler_s = NULL;
+	print->bad_s = 0;
 }
 
-void	write_n_free(t_list **parts, int fd)
+int fill_buf(t_print *print)
 {
-	// check if the free logic is good
-	t_list	*curr;
-	t_list	*tmp;
+	// NOT TESTED
+	int		len;
+	char	*s;
 
-	curr = (*parts)->next; // dont forget first one is '\0'
-	while (curr != NULL)
+	s = print->s;
+	len = 0;
+	while (s[len] && (s[len] != '%'))
 	{
-		tmp = curr;
-		if (write(fd, curr->content, ft_strlen(curr->content)) == -1)
-			return ((void)ft_lstclear(&curr, free));
-		curr = curr->next;
-		ft_lstdelone(tmp, free);
-	}
-	ft_lstdelone(*parts, free);
-}
-
-int	make_output(t_print *print, va_list valist)
-{
-	// CHECK PROTECTION
-	t_list	*curr;
-
-	curr = print->parts;
-	while (*(print->s))
-	{
-		if (*(print->s) == '%')
+		if (print->pos == PRINT_SIZE)
 		{
-			if (make_conv(print, valist, curr) == -1)
+			print->pos = 0;
+			if (write(PRINT_FD, s, PRINT_SIZE) == -1)
 				return (-1);
 		}
-		else
-			if (make_str(print, curr) == -1)
-				return (-1);
-		curr = curr->next;
+		print->buf[print->pos++] = s[len++];
 	}
+	print->ret += len;
+	print->s = s;
 	return (0);
 }
 
-int make_str(t_print *print, t_list *prev)
+int	set_conv_state(t_print *print)
 {
-	// PROTECTED, NOT TESTED
-	char	*end;
-	char	*tmp;
-	t_list	*new;
+	// CHANGE THIS FUNCTION FOR HANDLING BONUSES
+	static char	*(*handlers[])(t_print *print, va_list valist) =
+	{hdl_c, hdl_s, hdl_p, hdl_di, hdl_di, hdl_u, hdl_x, hdl_x, hdl_ps};
+	char	*i;
 
-	end = print->s;
-	while (*end && *end != '%')
-		++end;
-	tmp = ft_substr(print->s, 0, end - print->s);
-	if (tmp == NULL)
+	print->conv_s = *(print->s + 1);
+	i = ft_strchr(CONV_SET, print->conv_s);
+	if (i == NULL)
 		return (-1);
-	new = ft_lstnew(tmp);
-	if (new == NULL)
-		return (free(tmp), -1);
-	if (prev == NULL)
-		print->parts = new;
-	else
-		prev->next = new;
-	print->ret += end - print->s;
-	print->s = end;
-	return (0);
-}
-
-int	make_conv(t_print *print, va_list valist, t_list *prev)
-{
-	// PROTECTED, NOT TESTED
-	char	*tmp;
-	t_list	*new;
-
-	tmp = handle_convs(print, valist);
-	if (tmp == NULL)
-		return (-1);
-	new = ft_lstnew(tmp);
-	if (new == NULL)
-		return (free(tmp), -1);
-	if (prev == NULL)
-		print->parts = new;
-	else
-		prev->next = new;
-	return (0);
+	print->handler_s = handlers[i - CONV_SET];
+	print->s += 2; // THIS LINE SPECIFICALLY BUT WAY MORE THAN JUST THAT
 }

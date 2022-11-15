@@ -18,9 +18,15 @@
 # include <stdlib.h>
 # include <stdarg.h>
 
-# ifndef OUTFD
-#  define OUT_FD 1
+// SETTINGS
+# ifndef PRINT_FD
+#  define PRINT_FD 1
 # endif
+# ifndef PRINT_SIZE
+#  define PRINT_SIZE 1024
+# endif
+
+// UTILITY DEFINES
 # define CONV_SET "cspdiuxX%"
 # define HEX_SET "0123456789abcdef"
 
@@ -29,27 +35,23 @@ struct s_print
 {
 	char	*s;
 	int		ret;
-	t_list	*parts;
-	int		flags_s;
+	int		pos;
+	char	buf[PRINT_SIZE];
 	char	conv_s;
-	int		bad_s;
+	int		flags_s;
 	char	*(*handler_s)(t_print *, va_list);
 };
 
 int	ft_printf(const char *s, ...);
 int	w_vdprintf(int fd, const char *s, va_list valist);
 
-// PRINTF UTILS
-int		init_print(t_print *print, const char *s);
-int		make_output(t_print *print, va_list valist);
-int		make_str(t_print *print, t_list *curr);
-int		make_conv(t_print *print, va_list valist, t_list *curr);
-void	write_n_free(t_list **parts, int fd);
+// UTILS
+void	init_print(t_print *print, const char *s);
+int		fill_buf(t_print *print);
+int		put_conv(t_print *print, va_list valist);
+int		set_conv_state(t_print *print);
 
-// HANDLER
-char	*handle_convs(t_print *print, va_list valist);
-void	reset_state(t_print *print);
-void	set_conv_state(t_print *print, char **end);
+// HANDLERS & HANDLER UTILS
 char	*make_hexstr(size_t dec, int caps);
 char	*uitoa(unsigned int n);
 char	*hdl_c(t_print *print, va_list valist);
