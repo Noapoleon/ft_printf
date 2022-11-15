@@ -1,1 +1,5 @@
 check EVERY return to handle frees correctly
+
+hdl_di_flags
+hdl_csps_flags
+hdl_xu_flags
