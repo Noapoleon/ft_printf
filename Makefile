@@ -8,6 +8,8 @@ LIBFT	=	libft
 # Files
 SRCS	:=	ft_printf.c \
 			ft_printf_utils.c \
+			field_utils.c \
+			conv_parser.c \
 			handler_utils.c \
 			handler_nums.c \
 			handler_chars.c \
@@ -37,6 +39,8 @@ $(NAME): $(OBJDIR) $(OBJS)
 
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
+
+bonus: all
 
 clean:
 	$(RM) $(OBJS)

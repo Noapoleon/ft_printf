@@ -5,3 +5,5 @@ hdl_csps_flags
 hdl_xu_flags
 
 p flag could be implement easier with flag # by calling %#x
+
+TEST FOR BUFFERS BIFFER THAN PRINT_SIZE (1024)

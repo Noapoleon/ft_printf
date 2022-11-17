@@ -6,7 +6,7 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/13 14:30:18 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/14 18:42:15 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/16 18:04:47 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,4 +65,26 @@ char	*uitoa(unsigned int n)
 	}
 	tmp[len_pow] = '\0';
 	return (tmp);
+}
+
+char	conv_char(t_print *print)
+{
+	int	mask;
+	int i;
+
+	mask = 1;
+	i = 0;
+	while (mask != print->conv_s)
+	{
+		mask *= 2;
+		++i;
+	}
+	return (CONV_SET[i]);
+}
+
+int	hdl_bad(t_print *print, va_list valist)
+{
+	(void)valist;
+	fill_buf(print, "BAD_CONV", 8); // FUCKING CHANGE THIS
+	return (0);
 }
