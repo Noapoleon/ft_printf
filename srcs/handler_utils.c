@@ -6,65 +6,57 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/13 14:30:18 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/16 18:04:47 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/17 20:54:37 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftprintf.h"
 
-char	*make_hexstr(size_t dec, int caps)
+void	get_hexstr(char *x, size_t n, int caps)
 {
 	size_t	pow;
 	int		len;
-	char	*tmp;
 
 	pow = 1;
 	len = 1;
-	while ((dec / pow) >= 16)
+	while ((n / pow) >= 16)
 	{
 		pow *= 16;
 		++len;
 	}
-	tmp = malloc(sizeof(char) * (len + 1));
-	if (tmp == NULL)
-		return (NULL);
 	len = 0;
 	while (pow > 0)
 	{
-		tmp[len] = *(HEX_SET + ((dec / pow) % 16));
-		if (ft_isalpha(tmp[len]) && caps)
-			tmp[len] -= 32;
-		++len;
+		x[len++] = *(HEX_SET + ((n / pow) % 16));
+		if (caps && ft_isalpha(x[len - 1]))
+				x[len - 1] -= 32;
 		pow /= 16;
 	}
-	tmp[len] = '\0';
-	return (tmp);
+	x[len] = '\0';
 }
 
-char	*uitoa(unsigned int n)
+void	get_diustr(char *x, long n)
 {
+	long	nn;
 	long	pow;
-	int		len_pow;
-	char	*tmp;
+	long	len;
 
+	nn = n * (1 - (n < 0) * 2);
 	pow = 1;
-	len_pow = 1;
-	while ((n / pow) >= 10)
+	len = 1;
+	while ((nn / pow) >= 10)
 	{
 		pow *= 10;
-		++len_pow;
+		++len;
 	}
-	tmp = (char *)malloc(sizeof(char) * (len_pow + 1));
-	if (tmp == NULL)
-		return (NULL);
-	len_pow = 0;
+	x[0] = '-';
+	len = n < 0;
 	while (pow > 0)
 	{
-		tmp[len_pow++] = '0' + ((n / pow) % 10);
+		x[len++] = '0' + ((nn / pow) % 10);
 		pow /= 10;
 	}
-	tmp[len_pow] = '\0';
-	return (tmp);
+	x[len] = '\0';
 }
 
 char	conv_char(t_print *print)
@@ -78,7 +70,7 @@ char	conv_char(t_print *print)
 	{
 		mask *= 2;
 		++i;
-	}
+		}
 	return (CONV_SET[i]);
 }
 

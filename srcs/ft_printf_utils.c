@@ -6,7 +6,7 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 16:34:53 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/17 00:53:17 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/17 22:06:28 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,13 @@ void	print_state(t_print *print, int mode, const char *s, int fd)
 		print->buf[0] = '\0';
 		print->pos = 0;
 	}
-	print->conv_s = 0;
-	print->flags_s = 0;
-	print->width_s = 0;
-	print->preci_s = -1;
-	print->handler_s = NULL;
-	print->bad_s = 0;
+	print->convi = 0;
+	print->convc = '@';
+	print->flags = 0;
+	print->width = 0;
+	print->preci = -1;
+	print->handler = NULL;
+	print->bad = 0;
 }
 
 int	output_full(t_print *print)
@@ -135,14 +136,14 @@ void	output_state(t_print *print)
 	printf("print->width_s ===> %d\n", print->width_s);
 	printf("print->pres_s ====> %d\n", print->preci_s);
 	printf("FLAGS:\n");
-	if (print->flags_s & FLAG_MINUS)
+	if (print->flags_s & F_MINUS)
 		printf("- '-' minus\n");
-	if (print->flags_s & FLAG_ZERO)
+	if (print->flags_s & F_ZERO)
 		printf("- '0' zero\n");
-	if (print->flags_s & FLAG_HASH)
+	if (print->flags_s & F_HASH)
 		printf("- '#' hash\n");
-	if (print->flags_s & FLAG_SPACE)
+	if (print->flags_s & F_SPACE)
 		printf("- ' ' space\n");
-	if (print->flags_s & FLAG_PLUS)
+	if (print->flags_s & F_PLUS)
 		printf("- '+' plus\n");
 }

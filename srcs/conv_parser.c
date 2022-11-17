@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   conv_parser.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nlegrand <nlegrand@stud.42.fr>             +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/17 22:26:17 by nlegrand          #+#    #+#             */
+/*   Updated: 2022/11/17 22:27:06 by nlegrand         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libftprintf.h"
 
 int	set_conv_state(t_print *print)
@@ -31,7 +43,6 @@ int	set_conv_state(t_print *print)
 		return (-1);
 	if (print->bad_s != 1)
 		print->s = s;
-//	output_state(print);
 	return (0);
 	// IF set_conv_state EXITS WITH -1 I SHOULD PRINT THE BUFFER AND STOP
 	// ALSO EXIT PRINTF WITH -1
@@ -116,14 +127,15 @@ int	get_conv(t_print *print, char **s)
 	c = ft_strchr(CONV_SET, *ss);
 	if (c == NULL) // MIGHT NEED TO CHANGE THIS SO THAT IT MOVES THE PRINT->S AFTER THE BAD CONVERSION
 	{
-		print->bad_s = 1;
-		print->handler_s = hdl_bad;
+		print->bad = 1;
+		print->handler = hdl_bad;
 		return (0);
 	}
 	mask = 1;
 	mask <<= c - CONV_SET;
-	print->conv_s = mask;
-	print->handler_s = handlers[c - CONV_SET];
+	print->convi = mask;
+	print->convc = *c;
+	print->handler = handlers[c - CONV_SET];
 	*s = ss + 1;
 	return (0);
 }
