@@ -6,7 +6,7 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 19:25:46 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/18 18:54:34 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 21:20:07 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 int	ft_printf(const char *s, ...)
 {
 	va_list	valist;
-	int ret;
+	int		ret;
 
 	va_start(valist, s);
 	ret = ft_vdprintf(PRINT_FD, s, valist);
@@ -28,7 +28,7 @@ int	ft_printf(const char *s, ...)
 // same as printf but takes a file descriptor and a va_list as arguments
 int	ft_vdprintf(int fd, const char *s, va_list valist)
 {
-	t_print print;
+	t_print	print;
 
 	set_state(&print, PRINT_INIT, s, fd);
 	while (*(print.s))
@@ -40,7 +40,7 @@ int	ft_vdprintf(int fd, const char *s, va_list valist)
 			else if (print.handler(&print, valist) == -1)
 				return (-1);
 		}
-		else if (fill_buf(&print, print.s, -2) == -1)
+		else if (fill_buf(&print, print.s, -2, 0) == -1)
 			return (-1);
 	}
 	if (write(fd, print.buf, print.pos) == -1)

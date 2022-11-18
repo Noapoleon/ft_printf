@@ -6,7 +6,7 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 22:43:10 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/18 18:59:09 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 21:24:42 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,32 +16,36 @@
 int	hdl_c(t_print *print, va_list valist)
 {
 	char	c;
-	char	field[print->width + 1];
+	char	*field;
 
+	if (malloc_safe(print, &field, print->width + 1) == -1)
+		return (-1);
 	c = va_arg(valist, int);
 	if (print->width > 1)
 	{
 		ft_memset(field, ' ', print->width);
 		if (print->flags & FM_MINUS)
-		   	field[0] = c;
+			field[0] = c;
 		else
 			field[print->width - 1] = c;
-		return (fill_buf(print, field, print->width));
+		return (fill_buf(print, field, print->width, 1));
 	}
 	else
-		return (fill_buf(print, &c, 1));
+		return (fill_buf(print, &c, 1, 0));
 }
 
 // apprends string conversion to buffer
 int	hdl_s(t_print *print, va_list valist)
 {
 	char		*x;
-	char		field[print->width + 1];
+	char		*field;
 	int			max;
 
+	if (malloc_safe(print, &field, print->width + 1) == -1)
+		return (-1);
 	x = va_arg(valist, char *);
 	if (x == NULL && (int)ft_strlen(STR_NULL) > print->preci
-			&& print->preci != -1)
+		&& print->preci != -1)
 		x = STR_ZERO;
 	else if (x == NULL)
 		x = STR_NULL;
@@ -54,25 +58,38 @@ int	hdl_s(t_print *print, va_list valist)
 	if (print->width > max)
 		return (set_field_str(print, field, x, max));
 	if (max == print->gxl)
-		return (fill_buf(print, x, -1));
+		return (fill_buf(print, x, -1, 0));
 	else
-		return (fill_buf(print, x, max));
+		return (fill_buf(print, x, max, 0));
 }
 
 // appends % conversion to buffer
 int	hdl_ps(t_print *print, va_list valist)
 {
 	(void)valist;
-
-	return (fill_buf(print, "%", 1));
+	return (fill_buf(print, "%", 1, 0));
 }
 
 // appends buffer with the proper format for a failed conversion
 int	hdl_bad(t_print *print, va_list valist)
 {
+	char			x[28];
+	int				len;
+
 	(void)valist;
-	
-	set_compat(print);
-	fill_buf(print, "BAD_CONV", 8); // FUCKING CHANGE THIS
-	return (0);
+	len = 0;
+	x[len++] = '%';
+	if (print->flags > 0)
+		set_field_bad(print, x, &len);
+	if (print->width != 0)
+		get_diu_str(print, x + len, print->width);
+	len += print->gxl;
+	if (print->preci != -1)
+	{
+		x[len++] = '.';
+		get_diu_str(print, x + len, print->preci);
+	}
+	len += print->gxl;
+	x[len] = '\0';
+	return (fill_buf(print, x, -1, 0));
 }

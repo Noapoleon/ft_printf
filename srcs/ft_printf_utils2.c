@@ -6,14 +6,22 @@
 /*   By: nlegrand <nlegrand@stud.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 14:00:33 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/18 18:51:29 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 20:57:58 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftprintf.h"
 
-// normal atoi but it detects INT overflow, not LONG overflow like a fucking
-// idiot
+// can't fucking use VLAs so here's a small function to help catch malloc fails
+int	malloc_safe(t_print *print, char **ptr, size_t n)
+{
+	*ptr = malloc(sizeof(char) * n);
+	if (*ptr == NULL)
+		return (output_full(print), -1);
+	return (0);
+}
+
+// atoi but it detects INT overflow, not LONG overflow like a fucking idiot
 int	atoi_safe(const char *nptr)
 {
 	long	nb;
@@ -46,7 +54,7 @@ int	maxi(int a, int b)
 }
 
 // simple min function, named 'mini' for compatibility concerns
-int mini(int a, int b)
+int	mini(int a, int b)
 {
 	if (a <= b)
 		return (a);

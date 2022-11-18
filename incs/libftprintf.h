@@ -6,7 +6,7 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 15:46:40 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/18 18:59:35 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 21:09:10 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,9 @@ int		ft_vdprintf(int fd, const char *s, va_list valist);
 // UTILS
 void	set_state(t_print *print, int mode, const char *s, int fd);
 int		output_full(t_print *print);
-int		fill_buf(t_print *print, const char *s, int size);
+int		fill_buf(t_print *print, char *s, int size, int freeable);
 // UTILS 2
+int		malloc_safe(t_print *print, char **ptr, size_t n);
 int		atoi_safe(const char *nptr);
 int		maxi(int a, int b);
 int		mini(int a, int b);
@@ -98,7 +99,7 @@ int		set_conv_state(t_print *print);
 int		get_flags(t_print *print, char **s);
 int		get_width(t_print *print, char **s);
 int		get_preci(t_print *print, char **s);
-int		get_conv(t_print *print, char **s); // modify for a bad conversion because rn the print->s is not being updated
+int		get_conv(t_print *print, char **s);
 
 // HANDLERS & UTILS
 int		hdl_c(t_print *print, va_list valist);
@@ -114,7 +115,8 @@ void	get_diu_str(t_print *print, char *x, long n);
 
 // FIELD UTILS
 void	set_compat(t_print *print);
-int		set_field_str(t_print *print, char *field, char *s, int max); // maybe change len to max
+int		set_field_str(t_print *print, char *field, char *s, int max);
 int		set_field_nums(t_print *print, char *field, char *x, int max);
+void	set_field_bad(t_print *print, char *field, int *len);
 
 #endif

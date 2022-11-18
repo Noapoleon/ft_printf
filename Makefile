@@ -19,7 +19,7 @@ SRCS	:=	$(addprefix $(SRCDIR)/, $(SRCS))
 OBJS	:=	$(addprefix $(OBJDIR)/, $(OBJS))
 
 # Compiler options
-CC		=	cc -g3
+CC		=	cc
 CFLAGS	=	-Wall -Wextra -Werror -I./$(INCDIR)
 
 # Other
@@ -53,9 +53,3 @@ fclean: clean
 re: fclean all
 
 .PHONY: all re clean fclean
-
-test:
-	cc -g3  test.c nl_time/nl_time.c -L./ -lftprintf -I./incs -I./nl_time
-lists:
-	echo $(SRCS)
-	echo $(OBJS)

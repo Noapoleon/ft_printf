@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "nl_time.h"
+//#include "nl_time.h"
 
 int	main(int ac, char **av)
 {
@@ -28,9 +28,6 @@ int	main(int ac, char **av)
 //	ft_printf("ft_printf -> " "hello %s lol %s ok %s %%$\n", av[1], (char *)0, av[3]);
 //	printf("printf ----> " av[1], av[2], av[3], av[4]);
 //	ft_printf("ft_printf -> " av[1], av[2], av[3], av[4]);
-	ret = ft_printf("%042.20d", 42000);
-	printf("\nret -> %d\n", ret);
-	ret = printf("%042.20d", 42000);
-	printf("\nret -> %d\n", ret);
+	ret = ft_printf("%.0xis a big number", (unsigned int)-1);
 	return (0);
 }
