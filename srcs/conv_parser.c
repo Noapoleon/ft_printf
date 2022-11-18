@@ -6,7 +6,7 @@
 /*   By: nlegrand <nlegrand@stud.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 22:26:17 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/17 22:27:06 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 03:01:46 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	set_conv_state(t_print *print)
 	//{hdl_c, hdl_s, hdl_p, hdl_di, hdl_di, hdl_u, hdl_x, hdl_x, hdl_c};
 	char	*s;
 
-	print_state(print, PRINT_RESET, NULL, -1);
+	set_state(print, PRINT_RESET, NULL, -1);
 	s = print->s + 1;
 	if (get_flags(print, &s) == -1)
 		return (-1);
@@ -31,8 +31,8 @@ int	set_conv_state(t_print *print)
 	// DONT REMOVE YET:
 	// FOR THE WEIRD PRECISION BEHAVIOR PRINTING 0 WHEN CONVERSION IS WRONG YOU
 	// JUST NEED TO EXIT SET_CONV_STATE WITH BOTH PRINT->BAD_S (as -2) AND
-	// PRINT->PRECI_S SET, if both are set then fill buff with the value in
-	// preci_s. Then it can be handled in a dedicated handler. handler set in
+	// PRINT->preci SET, if both are set then fill buff with the value in
+	// preci. Then it can be handled in a dedicated handler. handler set in
 	// get_conv
 	// IMP NOTE: if conversion is wrong, flags are outputted in a weird order
 	// and some of them are even not outputted, probably because of order or
@@ -41,7 +41,7 @@ int	set_conv_state(t_print *print)
 		return (-1);
 	if (get_conv(print, &s) == -1)
 		return (-1);
-	if (print->bad_s != 1)
+	if (print->bad != 1)
 		print->s = s;
 	return (0);
 	// IF set_conv_state EXITS WITH -1 I SHOULD PRINT THE BUFFER AND STOP
@@ -63,12 +63,12 @@ int	get_flags(t_print *print, char **s)
 	ss = *s;
 	while (*ss)
 	{
-		f = ft_strchr(FLAG_SET, *ss);
+		f = ft_strchr(SET_FLAG, *ss);
 		if (f == NULL)
 			break ;
 		mask = 1;
-		mask <<= f - FLAG_SET;
-		print->flags_s |= mask;
+		mask <<= f - SET_FLAG;
+		print->flags |= mask;
 		++ss;
 	}
 	if (*ss == '\0')
@@ -82,8 +82,8 @@ int	get_width(t_print *print, char **s)
 	char *ss;
 
 	ss = *s;
-	print->width_s = atoi_noof(ss);
-	if (print->width_s == -1)
+	print->width = atoi_safe(ss);
+	if (print->width == -1)
 		return (-1);
 	while (ft_isdigit(*ss))
 		++ss;
@@ -101,10 +101,10 @@ int	get_preci(t_print *print, char **s)
 	if (*ss != '.')
 		return (0);
 	++ss;
-	print->preci_s = atoi_noof(ss);
+	print->preci = atoi_safe(ss);
 	while (ft_isdigit(*ss))
 		++ss;
-	if (print->preci_s == -1 || *ss == 0)
+	if (print->preci == -1 || *ss == 0)
 		return (-1);
 	*s = ss;
 	return (0);
@@ -124,7 +124,7 @@ int	get_conv(t_print *print, char **s)
 	ss = *s;
 	if (*ss == '\0')
 		return (-1);
-	c = ft_strchr(CONV_SET, *ss);
+	c = ft_strchr(SET_CONV, *ss);
 	if (c == NULL) // MIGHT NEED TO CHANGE THIS SO THAT IT MOVES THE PRINT->S AFTER THE BAD CONVERSION
 	{
 		print->bad = 1;
@@ -132,10 +132,10 @@ int	get_conv(t_print *print, char **s)
 		return (0);
 	}
 	mask = 1;
-	mask <<= c - CONV_SET;
+	mask <<= c - SET_CONV;
 	print->convi = mask;
 	print->convc = *c;
-	print->handler = handlers[c - CONV_SET];
+	print->handler = handlers[c - SET_CONV];
 	*s = ss + 1;
 	return (0);
 }

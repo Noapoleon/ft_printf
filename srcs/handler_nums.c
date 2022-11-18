@@ -6,7 +6,7 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 22:30:00 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/17 22:07:37 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 12:39:42 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,55 +14,46 @@
 
 int	hdl_di(t_print *print, va_list valist)
 {
+	const int	max = maxi(print->width, print->preci);
+	char		field[max + 1];
 	char		x[12];
-	const int	max = maxi(print->width_s, print->preci_s);
-	char		field[max + 1]; // check if it works when strlen(x) > max
-	const int	f = print->flags_s;
-	char		*prefix;
+	int			pdiff;
 
-	prefix = get_prefix(print, x[0]);
-	get_diustr(x, va_arg(valist, int));
-	if (f & F_ZERO && !(f & F_MINUS || print->preci_s != -1))
-		ft_memset(field, '0', max);
-	else
-		ft_memset(field, ' ', max);
+	get_diu_str(print, x, va_arg(valist, int));
+	set_compat(print);
+	ft_memset(field, print->fillc, max);
 	field[max] = '\0';
-	if (x[0] == '0'	&& !print->preci_s)
-		return (fill_buf(print, field, -1));
-	if ((int)ft_strlen(x) >= max)
-		return (fill_buf(print, x, -1));
-	return (set_field_hex(print, field, x, max));
+	pdiff = print->preci - ft_strlen(x);
+	pdiff *= (pdiff >= 0);
+	if (max == print->width && (comb_len(x, print->pref) + pdiff) <= max)
+		return (set_field_diu(print, field, x, max));
+	if (x[0] == '0' && print->preci == 0)
+		return (fill_buf(print, print->pref, ft_strlen(print->pref)));
+	if (fill_buf(print, print->pref, ft_strlen(print->pref)))
+			return (-1);
+	if (pdiff > 0 && fill_buf(print, field, pdiff) == -1)
+		return (-1);
+	return (fill_buf(print, x, -1));
 }
-//int	hdl_di(t_print *print, va_list valist)
-//{
-//	int		n;
-//	char	*tmp;
-//
-//	n = va_arg(valist, int);
-//	tmp = ft_itoa(n);
-//	if (tmp == NULL)
-//		return (-1);
-//	if (fill_buf(print, tmp, -1) == -1)
-//		return (free(tmp), -1);
-//	return (free(tmp), 0);
-//}
 
 int	hdl_u(t_print *print, va_list valist)
 {
+	const int	max = maxi(print->width, print->preci);
+	char		field[max + 1];
 	char		x[11];
-	const int	max = maxi(print->width_s, print->preci_s);
-	char		field[max + 1]; // check if it works when strlen(x) > max
-	const int	f = print->flags_s;
+	int			pdiff;
 
-	get_diustr(x, va_arg(valist, unsigned int));
-	if (f & F_ZERO && !(f & F_MINUS || print->preci_s != -1))
-		ft_memset(field, '0', max);
-	else
-		ft_memset(field, ' ', max);
+	get_diu_str(print, x, va_arg(valist, unsigned int));
+	set_compat(print);
+	ft_memset(field, print->fillc, max);
 	field[max] = '\0';
-	if (x[0] == '0'	&& !print->preci_s)
-		return (fill_buf(print, field, -1));
-	if ((int)ft_strlen(x) >= max)
-		return (fill_buf(print, x, -1));
-	return (set_field_hex(print, field, x, max));
+	pdiff = print->preci - ft_strlen(x);
+	pdiff *= (pdiff >= 0);
+	if (max == print->width && ((int)ft_strlen(x) + pdiff) <= max)
+		return (set_field_diu(print, field, x, max));
+	if (x[0] == '0' && print->preci == 0)
+		return (0);
+	if (pdiff > 0 && fill_buf(print, field, pdiff) == -1)
+		return (-1);
+	return (fill_buf(print, x, -1));
 }

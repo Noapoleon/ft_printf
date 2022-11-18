@@ -6,7 +6,7 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 22:43:10 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/17 16:01:27 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 03:10:17 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,18 @@
 int	hdl_c(t_print *print, va_list valist)
 {
 	char	c;
-	char	field[print->width_s + 1];
+	char	field[print->width + 1];
 
 	c = va_arg(valist, int);
-	if (print->width_s > 1)
+	if (print->width > 1)
 	{
-		ft_memset(field, ' ', print->width_s);
-//		init_field(print, field, print->width_s);
-		if (print->flags_s & F_MINUS)
+		ft_memset(field, ' ', print->width);
+//		init_field(print, field, print->width);
+		if (print->flags & FM_MINUS)
 		   	field[0] = c;
 		else
-			field[print->width_s - 1] = c;
-		return (fill_buf(print, field, print->width_s));
+			field[print->width - 1] = c;
+		return (fill_buf(print, field, print->width));
 	}
 	else
 		return (fill_buf(print, &c, 1));
@@ -36,17 +36,17 @@ int	hdl_s(t_print *print, va_list valist)
 {
 	char		*s;
 	int			len;
-	const int	p = print->preci_s;
-	const int	w = print->width_s;
+	const int	p = print->preci;
+	const int	w = print->width;
 	char		field[w + 1];
 
 //	init_field(print, field, w);
 	ft_memset(field, ' ', w);
 	s = va_arg(valist, char *);
 	if (s == NULL)
-		s = NULL_STR;
+		s = STR_NULL;
 	len = ft_strlen(s);
-	if (p == 0 || (s == (char *)NULL_STR && p < len && p != -1))
+	if (p == 0 || (s == (char *)STR_NULL && p < len && p != -1))
 		return (fill_buf(print, field, w));
 	if (w == 0)
 		return (fill_buf(print, s, mini(p, len)));
@@ -63,4 +63,4 @@ int	hdl_ps(t_print *print, va_list valist)
 	return (fill_buf(print, "%", 1));
 }
 
-//int	make_preci_str(t_print *print, char *
+//int	make_precitr(t_print *print, char *

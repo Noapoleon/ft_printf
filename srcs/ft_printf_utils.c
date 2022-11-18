@@ -6,13 +6,13 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 16:34:53 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/17 22:06:28 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 03:14:59 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftprintf.h"
 
-void	print_state(t_print *print, int mode, const char *s, int fd)
+void	set_state(t_print *print, int mode, const char *s, int fd)
 {
 	if (mode == PRINT_INIT)
 	{
@@ -23,10 +23,12 @@ void	print_state(t_print *print, int mode, const char *s, int fd)
 		print->pos = 0;
 	}
 	print->convi = 0;
-	print->convc = '@';
+	print->convc = '\0';
+	print->fillc = ' ';
 	print->flags = 0;
 	print->width = 0;
 	print->preci = -1;
+	print->pref = STR_ZERO;
 	print->handler = NULL;
 	print->bad = 0;
 }
@@ -61,35 +63,8 @@ int	fill_buf(t_print *print, char *s, int n)
 		print->s += len;
 	return (0);
 }
-//int fill_buf(t_print *print, char *s, int n) // NOT TESTED
-//{
-//	// if src == print->s dont put anything other than 0 for size
-//	// actually it's fine with some stuff like 's' conversion
-//	// will check if true for other ones as well
-//	int			len;
-//	const int	stop_ps = (n == -2);
-//
-//	len = 0;
-//	// s[len] in n>0 was added to fix a problem with s conversion, need to check if that breaks anything
-//	while ((n > 0 && len != n && s[len]) || (n <= -1 && s[len])) // might need to change n!=0 for precision flags and s conv {
-//	{
-//		if (stop_ps && s[len] == '%')
-//			break ;
-//		if (print->pos == PRINT_SIZE)
-//		{
-//			print->pos = 0;
-//			if (write(print->fd, s, PRINT_SIZE) == -1)
-//				return (-1);
-//		}
-//		print->buf[print->pos++] = s[len++];
-//	}
-//	print->ret += len;
-//	if (s == print->s)
-//		print->s += len;
-//	return (0);
-//}
 
-int	atoi_noof(const char *nptr)
+int	atoi_safe(const char *nptr)
 {
 	long	nb;
 	int		sign;
@@ -126,24 +101,7 @@ int mini(int a, int b)
 	return (b);
 }
 
-void	output_state(t_print *print)
+int	comb_len(char *a, char *b)
 {
-	// REMOVE THIS AFTER
-	printf("print->conv_s ====> %d\n", print->conv_s);
-	printf("printf->conv_s char => %c\n", conv_char(print));
-	printf("print->flags_s ===> %d\n", print->flags_s);
-	printf("print->bad_s =====> %d\n", print->bad_s);
-	printf("print->width_s ===> %d\n", print->width_s);
-	printf("print->pres_s ====> %d\n", print->preci_s);
-	printf("FLAGS:\n");
-	if (print->flags_s & F_MINUS)
-		printf("- '-' minus\n");
-	if (print->flags_s & F_ZERO)
-		printf("- '0' zero\n");
-	if (print->flags_s & F_HASH)
-		printf("- '#' hash\n");
-	if (print->flags_s & F_SPACE)
-		printf("- ' ' space\n");
-	if (print->flags_s & F_PLUS)
-		printf("- '+' plus\n");
+	return (ft_strlen(a) + ft_strlen(b));
 }

@@ -6,32 +6,48 @@
 /*   By: nlegrand <nlegrand@stud.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:00:28 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/17 22:52:24 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 12:50:45 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftprintf.h"
 
-//void	init_field(t_print *print, char *field, int len_field, char c)
-//{
-//	const int	f = print->flags_s;
-//
-//	field[len_field] = '\0';
-//	if ((f & F_ZERO) && !(f & F_MINUS) && print->conv_s >= CONV_P)
-//		ft_memset(field, '0', len_field);
-//	else
-//		ft_memset(field, ' ', len_field);
-//}
+// disables overridden flags and sets prefix
+void	set_compat(t_print *print)
+{
+	const char	c = print->convc;
+	const int	f = print->flags;
+
+	if (f & FM_PLUS)
+		print->flags &= ~FM_SPACE;
+	if (f & FM_MINUS || print->preci != -1)
+		print->flags &= ~FM_ZERO;
+	if (c == 'p')
+		print->pref = PREF_XL;
+	if (c == 'x' && f & FM_HASH)
+		print->pref = PREF_XL;
+	else if (c == 'X' && f & FM_HASH)
+		print->pref = PREF_XU;
+	else if (c == 'd' || c == 'i')
+	{
+		if (print->pref[0] != '-' && f & FM_PLUS)
+			print->pref = PREF_PLUS;
+		else if (print->pref[0] != '-' && f & FM_SPACE)
+			print->pref = PREF_SPACE;
+	}
+	if ((f & FM_ZERO && print->preci == -1) || print->width <= print->preci)
+		print->fillc = '0';
+}
 
 void	set_field_str(t_print *print, char *field, char *s, int len)
 {
-	const int	w = print->width_s;
-	const int	p = print->preci_s;
+	const int	w = print->width;
+	const int	p = print->preci;
 	int			i;
 	int			n;
 
 	field[w] = '\0';
-	if (print->flags_s & F_MINUS)
+	if (print->flags & FM_MINUS)
 		i = 0;
 	else
 		i = w - ((p == -1) * len) - ((p != -1) * p);
@@ -41,71 +57,77 @@ void	set_field_str(t_print *print, char *field, char *s, int len)
 }
 
 int	set_field_hex(t_print *print, char *field, char *x, int max)
-{
-	const int	f = print->flags_s;
-	const int	p = print->preci_s;
+{ // add support for (null)
+	const int	f = print->flags;
 	int			len;
-	const int	pdiff = p - ft_strlen(x);
-	char		*pre;
+	int			pdiff;
 
-	pre = ALT_L;
-	if (conv_char(print) == 'X')
-		pre = ALT_U;
-	len = max - ((pdiff > 0) * pdiff) - (int)ft_strlen(x)
-		- ((conv_char(print) != 'p' && f & F_HASH) * 2);
-	if (f & F_MINUS)
-		len = 0;
-	if (f & F_HASH && conv_char(print) != 'p')
-	{
-		ft_memcpy(field + len, pre, 2);
-		len += 2;
+	pdiff = print->preci - ft_strlen(x);
+	pdiff *= (pdiff >= 0);
+	if (x[0] == '0' && print->preci == 0)
+	{ // might need to change to so that it doesn't print the prefix sometimes, LOOK INTO IT
+		ft_memcpy(field + ((f & FM_MINUS) == 0) * (max - 1), print->pref,
+				ft_strlen(print->pref));
+		return (fill_buf(print, field, -1));
 	}
-	if (pdiff > 0)
-	{
-		ft_memset(field + len, '0', pdiff);
-		len += pdiff;
-	}
+	len = max - comb_len(x, print->pref) - pdiff;
+	len *= ((f & FM_MINUS) == 0);
+	ft_memcpy(field + len * ((f & FM_ZERO) == 0)
+			, print->pref, ft_strlen(print->pref));
+	len += ft_strlen(print->pref);
+	ft_memset(field + len, '0', pdiff);
+	len += pdiff;
 	ft_memcpy(field + len, x, ft_strlen(x));
 	return (fill_buf(print, field, -1));
 }
+//int	set_field_hex(t_print *print, char *field, char *x, int max)
+//{
+//	const int	f = print->flags;
+//	const int	p = print->preci;
+//	int			len;
+//	int			pdiff;
+//
+//	pdiff = print->preci - ft_strlen(x);
+//	pdiff *= (pdiff >= 0);
+//	len = max - ((pdiff > 0) * pdiff) - (int)ft_strlen(x)
+//		- ((print->convc != 'p' && f & FM_HASH) * 2);
+//	if (f & FM_MINUS)
+//		len = 0;
+//	if (f & FM_HASH && print->convc != 'p')
+//	{
+//		ft_memcpy(field + len, pre, 2);
+//		len += 2;
+//	}
+//	if (pdiff > 0)
+//	{
+//		ft_memset(field + len, '0', pdiff);
+//		len += pdiff;
+//	}
+//	ft_memcpy(field + len, x, ft_strlen(x));
+//	return (fill_buf(print, field, -1));
+//}
 
 int	set_field_diu(t_print *print, char *field, char *x, int max)
 {
-	const int	f = print->flags_s;
-	const int	p = print->preci_s;
+	const int	f = print->flags;
 	int			len;
-	const int	pdiff = p - ft_strlen(x);
+	int			pdiff;
 
-	len = max - ((pdiff > 0) * pdiff) - (int)ft_strlen(x);
-	if (f & F_MINUS)
-		len = 0;
-	if (pdiff > 0)
+	pdiff = print->preci - ft_strlen(x);
+	pdiff *= (pdiff >= 0);
+	if (x[0] == '0' && print->preci == 0)
 	{
-		ft_memset(field + len, '0', pdiff);
-		len += pdiff;
+		ft_memcpy(field + ((f & FM_MINUS) == 0) * (max - 1), print->pref,
+				ft_strlen(print->pref));
+		return (fill_buf(print, field, -1));
 	}
+	len = max - comb_len(x, print->pref) - pdiff;
+	len *= ((f & FM_MINUS) == 0);
+	ft_memcpy(field + len * ((f & FM_ZERO) == 0)
+			, print->pref, ft_strlen(print->pref));
+	len += ft_strlen(print->pref);
+	ft_memset(field + len, '0', pdiff);
+	len += pdiff;
 	ft_memcpy(field + len, x, ft_strlen(x));
 	return (fill_buf(print, field, -1));
-}
-
-char	*get_prefix(t_print *print, char c) 
-{
-   	// potential for simplifying hex functions by giving STR_ZERO
-	// depending on flags
-	const int	f = print->flags;
-	if (print->convc == 'x')
-		return (PREF_XL);
-	if (print->convc == 'X')
-		return (PREF_XU);
-	if (print->convc == 'd' || print->convc == 'i')
-	{
-		if (f & FM_PLUS && c != '-')
-			return (PREF_PLUS);
-		if (f & FM_PLUS && c == '-')
-			return (PREF_MINUS);
-		if (f & FM_SPACE && c != '-')
-			return (PREF_SPACE);
-		if (f & FM_SPACE && c == '-')
-			return (STR_ZERO);
-	}
 }

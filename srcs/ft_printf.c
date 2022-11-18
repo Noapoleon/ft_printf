@@ -6,7 +6,7 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 19:25:46 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/17 00:11:26 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 03:17:37 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,23 +19,23 @@ int	ft_printf(const char *s, ...)
 	int ret;
 
 	va_start(valist, s);
-	ret = w_vdprintf(PRINT_FD, s, valist);
+	ret = ft_vdprintf(PRINT_FD, s, valist);
 	va_end(valist);
 	return (ret);
 }
 
-int	w_vdprintf(int fd, const char *s, va_list valist)
+int	ft_vdprintf(int fd, const char *s, va_list valist)
 {
 	t_print print;
 
-	print_state(&print, PRINT_INIT, s, fd);
+	set_state(&print, PRINT_INIT, s, fd);
 	while (*(print.s))
 	{
 		if (*(print.s) == '%')
 		{
 			if (set_conv_state(&print) == -1)
 				return (write(fd, print.buf, print.pos), -1);
-			else if (print.handler_s(&print, valist) == -1)
+			else if (print.handler(&print, valist) == -1)
 				return (-1);
 		}
 		else if (fill_buf(&print, print.s, -2) == -1)

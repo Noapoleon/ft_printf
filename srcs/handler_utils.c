@@ -6,13 +6,13 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/13 14:30:18 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/17 20:54:37 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 03:45:00 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftprintf.h"
 
-void	get_hexstr(char *x, size_t n, int caps)
+void	get_hex_str(char *x, size_t n, int caps)
 {
 	size_t	pow;
 	int		len;
@@ -27,7 +27,7 @@ void	get_hexstr(char *x, size_t n, int caps)
 	len = 0;
 	while (pow > 0)
 	{
-		x[len++] = *(HEX_SET + ((n / pow) % 16));
+		x[len++] = *(SET_HEX + ((n / pow) % 16));
 		if (caps && ft_isalpha(x[len - 1]))
 				x[len - 1] -= 32;
 		pow /= 16;
@@ -35,43 +35,28 @@ void	get_hexstr(char *x, size_t n, int caps)
 	x[len] = '\0';
 }
 
-void	get_diustr(char *x, long n)
+void	get_diu_str(t_print *print, char *x, long n)
 {
-	long	nn;
 	long	pow;
 	long	len;
 
-	nn = n * (1 - (n < 0) * 2);
+	if (n < 0)
+		print->pref = PREF_MINUS;
+	n *= (1 - (n < 0) * 2);
 	pow = 1;
 	len = 1;
-	while ((nn / pow) >= 10)
+	while ((n / pow) >= 10)
 	{
 		pow *= 10;
 		++len;
 	}
-	x[0] = '-';
-	len = n < 0;
+	len = 0;
 	while (pow > 0)
 	{
-		x[len++] = '0' + ((nn / pow) % 10);
+		x[len++] = '0' + ((n / pow) % 10);
 		pow /= 10;
 	}
 	x[len] = '\0';
-}
-
-char	conv_char(t_print *print)
-{
-	int	mask;
-	int i;
-
-	mask = 1;
-	i = 0;
-	while (mask != print->conv_s)
-	{
-		mask *= 2;
-		++i;
-		}
-	return (CONV_SET[i]);
 }
 
 int	hdl_bad(t_print *print, va_list valist)
