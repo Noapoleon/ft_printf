@@ -6,13 +6,14 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 19:25:46 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/18 03:17:37 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 18:54:34 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftprintf.h"
 #include <stdio.h>
 
+// outputs format with processed conversions from va_list
 int	ft_printf(const char *s, ...)
 {
 	va_list	valist;
@@ -24,6 +25,7 @@ int	ft_printf(const char *s, ...)
 	return (ret);
 }
 
+// same as printf but takes a file descriptor and a va_list as arguments
 int	ft_vdprintf(int fd, const char *s, va_list valist)
 {
 	t_print print;
@@ -45,4 +47,3 @@ int	ft_vdprintf(int fd, const char *s, va_list valist)
 		return (-1);
 	return (print.ret);
 }
-

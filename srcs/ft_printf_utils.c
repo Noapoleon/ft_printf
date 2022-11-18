@@ -6,12 +6,15 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 16:34:53 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/18 03:14:59 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 18:48:39 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftprintf.h"
 
+// initializes print struct with all proper values
+// if PRINT_INIT is given it will completely reset print
+// otherwise is will just set specific values to 0 for the next conversion
 void	set_state(t_print *print, int mode, const char *s, int fd)
 {
 	if (mode == PRINT_INIT)
@@ -24,6 +27,7 @@ void	set_state(t_print *print, int mode, const char *s, int fd)
 	}
 	print->convi = 0;
 	print->convc = '\0';
+	print->gxl = 0;
 	print->fillc = ' ';
 	print->flags = 0;
 	print->width = 0;
@@ -33,6 +37,8 @@ void	set_state(t_print *print, int mode, const char *s, int fd)
 	print->bad = 0;
 }
 
+// outputs the buffer to the fd set in print struct and resets the inner
+// write position to 0
 int	output_full(t_print *print)
 {
 	if (print->pos == PRINT_SIZE)
@@ -44,7 +50,9 @@ int	output_full(t_print *print)
 	return (0);
 }
 
-int	fill_buf(t_print *print, char *s, int n)
+// gradually fills the buffer with strings passed from the handler functions
+// and once full writes to the fd
+int	fill_buf(t_print *print, const char *s, int n)
 {
 	int	len;
 
@@ -62,46 +70,4 @@ int	fill_buf(t_print *print, char *s, int n)
 	if (s == print->s)
 		print->s += len;
 	return (0);
-}
-
-int	atoi_safe(const char *nptr)
-{
-	long	nb;
-	int		sign;
-
-	nb = 0;
-	while (*nptr && (((*nptr >= 9) && (*nptr <= 13)) || (*nptr == ' ')))
-		++nptr;
-	sign = 1;
-	if ((*nptr == '-') || (*nptr == '+'))
-		if (*nptr++ == '-')
-			sign = -1;
-	while ((*nptr >= '0') && (*nptr <= '9'))
-	{
-		nb = (nb * 10) + (*nptr++ - 48);
-		if (nb > INT_MAX && sign == 1)
-			return (-1);
-		if (nb > (long)INT_MAX + 1 && sign == -1)
-			return (0);
-	}
-	return (sign * (int)nb);
-}
-
-int	maxi(int a, int b)
-{
-	if (a >= b)
-		return (a);
-	return (b);
-}
-
-int mini(int a, int b)
-{
-	if (a <= b)
-		return (a);
-	return (b);
-}
-
-int	comb_len(char *a, char *b)
-{
-	return (ft_strlen(a) + ft_strlen(b));
 }

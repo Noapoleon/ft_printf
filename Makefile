@@ -8,12 +8,12 @@ LIBFT	=	libft
 # Files
 SRCS	:=	ft_printf.c \
 			ft_printf_utils.c \
-			field_utils.c \
+			ft_printf_utils2.c \
 			conv_parser.c \
 			handler_utils.c \
 			handler_nums.c \
 			handler_chars.c \
-			handler_hexs.c
+			field_utils.c 
 OBJS	:=	$(SRCS:.c=.o)
 SRCS	:=	$(addprefix $(SRCDIR)/, $(SRCS))
 OBJS	:=	$(addprefix $(OBJDIR)/, $(OBJS))

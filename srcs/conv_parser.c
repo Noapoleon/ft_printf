@@ -6,20 +6,20 @@
 /*   By: nlegrand <nlegrand@stud.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 22:26:17 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/18 03:01:46 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 18:56:41 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftprintf.h"
 
+// sets print struct options with proper value by parsing parts of the format
+// string with subfunctions
 int	set_conv_state(t_print *print)
 {
 	// CHECK IF BAD CONVERSION AND NO CONVERSIONS ARE NECESSARY
 	// BAD CONVERSION AND NO CONVERSION SHOULD HAVE DIFFERENT VALUES
 	// BECAUSE YOU PRINT A "NO CONVERSION"
 	// CHANGE THIS FUNCTION FOR HANDLING BONUSES
-	//static int	(*handlers[])(t_print *print, va_list valist) =
-	//{hdl_c, hdl_s, hdl_p, hdl_di, hdl_di, hdl_u, hdl_x, hdl_x, hdl_c};
 	char	*s;
 
 	set_state(print, PRINT_RESET, NULL, -1);
@@ -41,8 +41,6 @@ int	set_conv_state(t_print *print)
 		return (-1);
 	if (get_conv(print, &s) == -1)
 		return (-1);
-	if (print->bad != 1)
-		print->s = s;
 	return (0);
 	// IF set_conv_state EXITS WITH -1 I SHOULD PRINT THE BUFFER AND STOP
 	// ALSO EXIT PRINTF WITH -1
@@ -54,6 +52,7 @@ int	set_conv_state(t_print *print)
 	//print->handler_s = handlers[i - CONV_SET];
 }
 
+// parse flags from format
 int	get_flags(t_print *print, char **s)
 {
 	char *ss;
@@ -77,6 +76,7 @@ int	get_flags(t_print *print, char **s)
 	return (0);
 }
 
+// parse width from format
 int	get_width(t_print *print, char **s)
 {
 	char *ss;
@@ -93,6 +93,7 @@ int	get_width(t_print *print, char **s)
 	return (0);
 }
 
+// parse precision from format
 int	get_preci(t_print *print, char **s)
 {
 	char *ss;
@@ -110,6 +111,7 @@ int	get_preci(t_print *print, char **s)
 	return (0);
 }
 
+// parse conversion from format
 int	get_conv(t_print *print, char **s)
 {
 	// NEED TO ADD A HANDLER FOR BAD CONVERSIONS
@@ -129,6 +131,7 @@ int	get_conv(t_print *print, char **s)
 	{
 		print->bad = 1;
 		print->handler = hdl_bad;
+		*s = ss; // check if not +1  like below
 		return (0);
 	}
 	mask = 1;

@@ -6,7 +6,7 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 15:46:40 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/18 03:47:16 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 18:59:35 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,20 +62,21 @@
 typedef struct s_print	t_print;
 struct s_print
 {
-	char	*s;
-	int		fd;
-	int		ret;
-	char	buf[PRINT_SIZE];
-	int		pos;
-	int		convi;
-	char	convc;
-	char	fillc;
-	int		flags;
-	int		width;
-	int		preci;
-	char	*pref;
-	int		(*handler)(t_print *, va_list);
-	int		bad;
+	char			*s;
+	int				fd;
+	int				ret;
+	char			buf[PRINT_SIZE];
+	int				pos;
+	unsigned int	convi;
+	char			convc;
+	int				gxl;
+	char			fillc;
+	unsigned int	flags;
+	int				width;
+	int				preci;
+	char			*pref;
+	int				(*handler)(t_print *, va_list);
+	int				bad;
 };
 
 // MAIN
@@ -84,7 +85,9 @@ int		ft_vdprintf(int fd, const char *s, va_list valist);
 
 // UTILS
 void	set_state(t_print *print, int mode, const char *s, int fd);
-int		fill_buf(t_print *print, char *s, int size);
+int		output_full(t_print *print);
+int		fill_buf(t_print *print, const char *s, int size);
+// UTILS 2
 int		atoi_safe(const char *nptr);
 int		maxi(int a, int b);
 int		mini(int a, int b);
@@ -95,24 +98,23 @@ int		set_conv_state(t_print *print);
 int		get_flags(t_print *print, char **s);
 int		get_width(t_print *print, char **s);
 int		get_preci(t_print *print, char **s);
-int		get_conv(t_print *print, char **s);
+int		get_conv(t_print *print, char **s); // modify for a bad conversion because rn the print->s is not being updated
 
 // HANDLERS & UTILS
 int		hdl_c(t_print *print, va_list valist);
 int		hdl_s(t_print *print, va_list valist);
+int		hdl_ps(t_print *print, va_list valist);
 int		hdl_p(t_print *print, va_list valist);
 int		hdl_di(t_print *print, va_list valist);
 int		hdl_u(t_print *print, va_list valist);
 int		hdl_x(t_print *print, va_list valist);
-int		hdl_ps(t_print *print, va_list valist);
-void	get_hex_str(char *x, size_t n, int caps);
-void	get_diu_str(t_print *print, char *x, long n);
 int		hdl_bad(t_print *print, va_list valist);
+void	get_hex_str(t_print *print, char *x, size_t n, int caps);
+void	get_diu_str(t_print *print, char *x, long n);
 
 // FIELD UTILS
 void	set_compat(t_print *print);
-void	set_field_str(t_print *print, char *field, char *s, int len); // maybe change len to max
-int		set_field_hex(t_print *print, char *field, char *x, int max);
-int		set_field_diu(t_print *print, char *field, char *x, int max);
+int		set_field_str(t_print *print, char *field, char *s, int max); // maybe change len to max
+int		set_field_nums(t_print *print, char *field, char *x, int max);
 
 #endif

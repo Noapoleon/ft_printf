@@ -6,12 +6,13 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 22:43:10 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/18 03:10:17 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 18:59:09 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftprintf.h"
 
+// appends char conversion to buffer
 int	hdl_c(t_print *print, va_list valist)
 {
 	char	c;
@@ -21,7 +22,6 @@ int	hdl_c(t_print *print, va_list valist)
 	if (print->width > 1)
 	{
 		ft_memset(field, ' ', print->width);
-//		init_field(print, field, print->width);
 		if (print->flags & FM_MINUS)
 		   	field[0] = c;
 		else
@@ -32,30 +32,34 @@ int	hdl_c(t_print *print, va_list valist)
 		return (fill_buf(print, &c, 1));
 }
 
+// apprends string conversion to buffer
 int	hdl_s(t_print *print, va_list valist)
 {
-	char		*s;
-	int			len;
-	const int	p = print->preci;
-	const int	w = print->width;
-	char		field[w + 1];
+	char		*x;
+	char		field[print->width + 1];
+	int			max;
 
-//	init_field(print, field, w);
-	ft_memset(field, ' ', w);
-	s = va_arg(valist, char *);
-	if (s == NULL)
-		s = STR_NULL;
-	len = ft_strlen(s);
-	if (p == 0 || (s == (char *)STR_NULL && p < len && p != -1))
-		return (fill_buf(print, field, w));
-	if (w == 0)
-		return (fill_buf(print, s, mini(p, len)));
-	if ((mini(p, len) >= w) || (p == -1 && len >= w))
-		return (fill_buf(print, s, -1));
-	set_field_str(print, field, s, len);
-	return (fill_buf(print, field, -1));
+	x = va_arg(valist, char *);
+	if (x == NULL && (int)ft_strlen(STR_NULL) > print->preci
+			&& print->preci != -1)
+		x = STR_ZERO;
+	else if (x == NULL)
+		x = STR_NULL;
+	print->gxl = ft_strlen(x);
+	max = mini(print->preci, print->gxl);
+	max = (max != -1) * max + (max == -1) * print->gxl;
+	set_compat(print);
+	ft_memset(field, ' ', print->width);
+	field[print->width] = '\0';
+	if (print->width > max)
+		return (set_field_str(print, field, x, max));
+	if (max == print->gxl)
+		return (fill_buf(print, x, -1));
+	else
+		return (fill_buf(print, x, max));
 }
 
+// appends % conversion to buffer
 int	hdl_ps(t_print *print, va_list valist)
 {
 	(void)valist;
@@ -63,4 +67,12 @@ int	hdl_ps(t_print *print, va_list valist)
 	return (fill_buf(print, "%", 1));
 }
 
-//int	make_precitr(t_print *print, char *
+// appends buffer with the proper format for a failed conversion
+int	hdl_bad(t_print *print, va_list valist)
+{
+	(void)valist;
+	
+	set_compat(print);
+	fill_buf(print, "BAD_CONV", 8); // FUCKING CHANGE THIS
+	return (0);
+}

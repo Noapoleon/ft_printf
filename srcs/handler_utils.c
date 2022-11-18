@@ -6,13 +6,14 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/13 14:30:18 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/18 03:45:00 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 18:59:18 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftprintf.h"
 
-void	get_hex_str(char *x, size_t n, int caps)
+// populates x with hexadecimal digits
+void	get_hex_str(t_print *print, char *x, size_t n, int caps)
 {
 	size_t	pow;
 	int		len;
@@ -33,8 +34,10 @@ void	get_hex_str(char *x, size_t n, int caps)
 		pow /= 16;
 	}
 	x[len] = '\0';
+	print->gxl = len;
 }
 
+// populates x with decimal digits
 void	get_diu_str(t_print *print, char *x, long n)
 {
 	long	pow;
@@ -57,11 +60,5 @@ void	get_diu_str(t_print *print, char *x, long n)
 		pow /= 10;
 	}
 	x[len] = '\0';
-}
-
-int	hdl_bad(t_print *print, va_list valist)
-{
-	(void)valist;
-	fill_buf(print, "BAD_CONV", 8); // FUCKING CHANGE THIS
-	return (0);
+	print->gxl = len;
 }
