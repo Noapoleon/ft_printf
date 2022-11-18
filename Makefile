@@ -1,6 +1,6 @@
 # Project structure
 NAME	=	libftprintf.a
-INCDIR	=	incs
+INCDIR	=	./
 SRCDIR	=	srcs
 OBJDIR	=	objs
 LIBFT	=	libft
@@ -19,8 +19,8 @@ SRCS	:=	$(addprefix $(SRCDIR)/, $(SRCS))
 OBJS	:=	$(addprefix $(OBJDIR)/, $(OBJS))
 
 # Compiler options
-CC		=	cc
-CFLAGS	=	-g3 -Wall -Wextra -Werror -I./$(INCDIR)
+CC		=	clang
+CFLAGS	=	-Wall -Wextra -Werror -I./$(INCDIR) -I./$(LIBFT)
 
 # Other
 RM		= rm -rf
@@ -33,7 +33,6 @@ all: $(NAME)
 
 $(NAME): $(OBJDIR) $(OBJS)
 	make -C $(LIBFT)
-	cp $(LIBFT)/libft.h incs/libft.h
 	cp $(LIBFT)/libft.a $(NAME)
 	$(AR) $(NAME) $(OBJS)
 
@@ -51,8 +50,5 @@ fclean: clean
 	$(RM) $(LIBFT)/libft.a
 
 re: fclean all
-
-test:
-	$(CC) $(CFLAGS) test.c -I./incs -L./ -lftprintf
 
 .PHONY: all re clean fclean
