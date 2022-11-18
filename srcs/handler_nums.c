@@ -6,11 +6,11 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 22:30:00 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/18 21:08:48 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 23:44:45 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
+#include "ft_printf.h"
 
 // appends a signed decimal conversion to buffer
 int	hdl_di(t_print *print, va_list valist)
@@ -31,12 +31,12 @@ int	hdl_di(t_print *print, va_list valist)
 	if (max == print->width && (comb_len(x, print->pref) + pdiff) <= max)
 		return (set_field_nums(print, field, x, max));
 	if (x[0] == '0' && print->preci == 0)
-		return (fill_buf(print, print->pref, ft_strlen(print->pref), 0));
-	if (fill_buf(print, print->pref, ft_strlen(print->pref), 0))
-		return (-1);
-	if (pdiff > 0 && fill_buf(print, field, pdiff, 1) == -1)
-		return (-1);
-	return (fill_buf(print, x, -1, 0));
+		return (fill_buf(print, print->pref, ft_strlen(print->pref), field));
+	if (fill_buf(print, print->pref, ft_strlen(print->pref), NULL) == -1)
+		return (free(field), -1);
+	if (pdiff > 0 && fill_buf(print, field, pdiff, NULL) == -1)
+		return (free(field), -1);
+	return (fill_buf(print, x, -1, field));
 }
 
 // appends an unsigned decimal conversion to buffer
@@ -58,10 +58,10 @@ int	hdl_u(t_print *print, va_list valist)
 	if (max == print->width && (print->gxl + pdiff) <= max)
 		return (set_field_nums(print, field, x, max));
 	if (x[0] == '0' && print->preci == 0)
-		return (0);
-	if (pdiff > 0 && fill_buf(print, field, pdiff, 1) == -1)
-		return (-1);
-	return (fill_buf(print, x, -1, 0));
+		return (free(field), 0);
+	if (pdiff > 0 && fill_buf(print, field, pdiff, NULL) == -1)
+		return (free(field), -1);
+	return (fill_buf(print, x, -1, field));
 }
 
 // appends an usigned hexadecimal conversion to buffer
@@ -85,12 +85,12 @@ int	hdl_x(t_print *print, va_list valist)
 	if (max == print->width && (comb_len(x, print->pref) + pdiff) <= max)
 		return (set_field_nums(print, field, x, max));
 	if (x[0] == '0' && print->preci == 0)
-		return (0);
-	if (fill_buf(print, print->pref, ft_strlen(print->pref), 0))
-		return (-1);
-	if (pdiff > 0 && fill_buf(print, field, pdiff, 1) == -1)
-		return (-1);
-	return (fill_buf(print, x, -1, 0));
+		return (free(field), 0);
+	if (fill_buf(print, print->pref, ft_strlen(print->pref), NULL))
+		return (free(field), -1);
+	if (pdiff > 0 && fill_buf(print, field, pdiff, NULL) == -1)
+		return (free(field), -1);
+	return (fill_buf(print, x, -1, field));
 }
 
 // appends a pointer address conversion to buffer
@@ -114,10 +114,10 @@ int	hdl_p(t_print *print, va_list valist)
 	if (max == print->width && (comb_len(x, print->pref) + pdiff) <= max)
 		return (set_field_nums(print, field, x, max));
 	if (x[0] == '0' && print->preci == 0)
-		return (0);
-	if (fill_buf(print, print->pref, ft_strlen(print->pref), 0))
-		return (-1);
-	if (pdiff > 0 && fill_buf(print, field, pdiff, 1) == -1)
-		return (-1);
-	return (fill_buf(print, x, -1, 0));
+		return (free(field), 0);
+	if (fill_buf(print, print->pref, ft_strlen(print->pref), NULL))
+		return (free(field), -1);
+	if (pdiff > 0 && fill_buf(print, field, pdiff, NULL) == -1)
+		return (free(field), -1);
+	return (fill_buf(print, x, -1, field));
 }

@@ -6,11 +6,11 @@
 /*   By: nlegrand <nlegrand@stud.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 22:26:17 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/18 20:29:56 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 23:44:04 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
+#include "ft_printf.h"
 
 // sets print struct options with proper value by parsing parts of the format
 // string with subfunctions

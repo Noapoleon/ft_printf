@@ -8,12 +8,12 @@ int	main(int ac, char **av)
 {
 	(void)ac;
 	(void)av;
-	char	*null_str = NULL;
-	int		x = 42;
+	//char	*null_str = NULL;
+	//int		x = 42;
 	int		ret;
 
-	if (ac < 2)
-		return (printf("wrong arguments, fool!\n"));
+	//if (ac < 2)
+	//	return (printf("wrong arguments, fool!\n"));
 //	fprintf(stderr, "printf ----> ");
 //	nl_time(NLT_START);
 //	printf("%s %d", av[1], x);
@@ -28,6 +28,8 @@ int	main(int ac, char **av)
 //	ft_printf("ft_printf -> " "hello %s lol %s ok %s %%$\n", av[1], (char *)0, av[3]);
 //	printf("printf ----> " av[1], av[2], av[3], av[4]);
 //	ft_printf("ft_printf -> " av[1], av[2], av[3], av[4]);
-	ret = ft_printf("%.0xis a big number", (unsigned int)-1);
+	ret = ft_printf("%x", 255);
+	printf("ret -> %d\n", ret);
+
 	return (0);
 }

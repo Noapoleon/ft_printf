@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libftprintf.h                                      :+:      :+:    :+:   */
+/*   ft_printf.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 15:46:40 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/18 21:09:10 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 23:47:32 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIBFTPRINTF_H
-# define LIBFTPRINTF_H
+#ifndef FT_PRINTF_H
+# define FT_PRINTF_H
 
 # include "libft.h"
 # include <unistd.h>
@@ -86,7 +86,7 @@ int		ft_vdprintf(int fd, const char *s, va_list valist);
 // UTILS
 void	set_state(t_print *print, int mode, const char *s, int fd);
 int		output_full(t_print *print);
-int		fill_buf(t_print *print, char *s, int size, int freeable);
+int		fill_buf(t_print *print, char *s, int size, void *free);
 // UTILS 2
 int		malloc_safe(t_print *print, char **ptr, size_t n);
 int		atoi_safe(const char *nptr);

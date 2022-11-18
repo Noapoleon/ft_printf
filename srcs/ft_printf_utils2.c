@@ -6,11 +6,11 @@
 /*   By: nlegrand <nlegrand@stud.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 14:00:33 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/18 20:57:58 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 23:42:41 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
+#include "ft_printf.h"
 
 // can't fucking use VLAs so here's a small function to help catch malloc fails
 int	malloc_safe(t_print *print, char **ptr, size_t n)

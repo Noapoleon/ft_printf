@@ -6,11 +6,11 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 16:34:53 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/18 21:03:33 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 23:42:35 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
+#include "ft_printf.h"
 
 // initializes print struct with all proper values
 // if PRINT_INIT is given it will completely reset print
@@ -52,7 +52,7 @@ int	output_full(t_print *print)
 
 // gradually fills the buffer with strings passed from the handler functions
 // and once full writes to the fd
-int	fill_buf(t_print *print, char *s, int n, int freeable)
+int	fill_buf(t_print *print, char *s, int n, void *freeable)
 {
 	int	len;
 
@@ -63,16 +63,10 @@ int	fill_buf(t_print *print, char *s, int n, int freeable)
 			break ;
 		print->buf[print->pos++] = s[len++];
 		if (output_full(print) == -1)
-		{
-			if (freeable)
-				return (free(s), -1);
-			return (-1);
-		}
+			return (free(freeable), -1);
 	}
 	print->ret += len;
 	if (s == print->s)
 		print->s += len;
-	if (freeable)
-		return (free(s), 0);
-	return (0);
+	return (free(freeable), 0);
 }

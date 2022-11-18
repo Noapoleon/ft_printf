@@ -6,11 +6,11 @@
 /*   By: nlegrand <nlegrand@stud.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:00:28 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/18 21:06:02 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 23:44:33 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
+#include "ft_printf.h"
 
 // disables overridden flags and sets prefix
 void	set_compat(t_print *print)
@@ -47,7 +47,7 @@ int	set_field_str(t_print *print, char *field, char *x, int max)
 	len = print->width - max;
 	len *= ((print->flags & FM_MINUS) == 0);
 	ft_memcpy(field + len, x, max);
-	return (fill_buf(print, field, print->width, 1));
+	return (fill_buf(print, field, print->width, field));
 }
 
 // populates field with the numerical string
@@ -63,7 +63,7 @@ int	set_field_nums(t_print *print, char *field, char *x, int max)
 	{
 		ft_memcpy(field + ((f & FM_MINUS) == 0) * (max - 1), print->pref,
 			ft_strlen(print->pref));
-		return (fill_buf(print, field, -1, 1));
+		return (fill_buf(print, field, -1, field));
 	}
 	len = max - comb_len(x, print->pref) - pdiff;
 	len *= ((f & FM_MINUS) == 0);
@@ -73,7 +73,7 @@ int	set_field_nums(t_print *print, char *field, char *x, int max)
 	ft_memset(field + len, '0', pdiff);
 	len += pdiff;
 	ft_memcpy(field + len, x, ft_strlen(x));
-	return (fill_buf(print, field, -1, 1));
+	return (fill_buf(print, field, -1, field));
 }
 
 void	set_field_bad(t_print *print, char *field, int *len)

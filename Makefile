@@ -20,7 +20,7 @@ OBJS	:=	$(addprefix $(OBJDIR)/, $(OBJS))
 
 # Compiler options
 CC		=	cc
-CFLAGS	=	-Wall -Wextra -Werror -I./$(INCDIR)
+CFLAGS	=	-g3 -Wall -Wextra -Werror -I./$(INCDIR)
 
 # Other
 RM		= rm -rf
@@ -51,5 +51,8 @@ fclean: clean
 	$(RM) $(LIBFT)/libft.a
 
 re: fclean all
+
+test:
+	$(CC) $(CFLAGS) test.c -I./incs -L./ -lftprintf
 
 .PHONY: all re clean fclean

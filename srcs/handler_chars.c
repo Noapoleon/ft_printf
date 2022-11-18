@@ -6,11 +6,11 @@
 /*   By: nlegrand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 22:43:10 by nlegrand          #+#    #+#             */
-/*   Updated: 2022/11/18 21:24:42 by nlegrand         ###   ########.fr       */
+/*   Updated: 2022/11/18 23:42:54 by nlegrand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
+#include "ft_printf.h"
 
 // appends char conversion to buffer
 int	hdl_c(t_print *print, va_list valist)
@@ -28,10 +28,10 @@ int	hdl_c(t_print *print, va_list valist)
 			field[0] = c;
 		else
 			field[print->width - 1] = c;
-		return (fill_buf(print, field, print->width, 1));
+		return (fill_buf(print, field, print->width, field));
 	}
 	else
-		return (fill_buf(print, &c, 1, 0));
+		return (fill_buf(print, &c, 1, field));
 }
 
 // apprends string conversion to buffer
@@ -58,16 +58,16 @@ int	hdl_s(t_print *print, va_list valist)
 	if (print->width > max)
 		return (set_field_str(print, field, x, max));
 	if (max == print->gxl)
-		return (fill_buf(print, x, -1, 0));
+		return (fill_buf(print, x, -1, field));
 	else
-		return (fill_buf(print, x, max, 0));
+		return (fill_buf(print, x, max, field));
 }
 
 // appends % conversion to buffer
 int	hdl_ps(t_print *print, va_list valist)
 {
 	(void)valist;
-	return (fill_buf(print, "%", 1, 0));
+	return (fill_buf(print, "%", 1, NULL));
 }
 
 // appends buffer with the proper format for a failed conversion
@@ -91,5 +91,5 @@ int	hdl_bad(t_print *print, va_list valist)
 	}
 	len += print->gxl;
 	x[len] = '\0';
-	return (fill_buf(print, x, -1, 0));
+	return (fill_buf(print, x, -1, NULL));
 }
